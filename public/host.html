@@ -134,6 +134,9 @@
     button.primary { background: linear-gradient(135deg, #0284c7, #00a4e4); border: none; }
     button.success { background: linear-gradient(135deg, #059669, #10b981); border: none; }
     button.danger { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; }
+    .grid-switch { display: inline-flex; gap: 6px; padding: 4px; border-radius: 12px; background: rgba(15, 23, 42, 0.75); border: 1px solid var(--border); }
+    .grid-switch button { padding: 8px 14px; border: none; background: transparent; color: var(--muted); font-size: 13px; }
+    .grid-switch button.active { background: linear-gradient(135deg, #0284c7, #00a4e4); color: #fff; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -141,11 +144,11 @@
   <div class="topbar">
     <div class="title-group">
       <span class="chip">KELOMPOK 36 · TANJUNG PRIOK</span>
-      <div class="title">PELINDO! <span style="color: var(--cyan); font-weight: 600;">· P·R·I·O·K 5×5</span></div>
+      <div class="title">PELINDO! <span id="gridTitleBadge" style="color: var(--cyan); font-weight: 600;">· 5×5 P·R·I·O·K</span></div>
     </div>
     <div class="stats">
       <div class="stat-box">Pemain: <span id="playerCount">0</span></div>
-      <div class="stat-box">Call: <span id="callProgress">0 / 35</span></div>
+      <div class="stat-box">Call: <span id="callProgress">0 / 62</span></div>
     </div>
   </div>
 
@@ -164,13 +167,19 @@
           </h1>
           <p style="font-size: 19px; color: var(--muted); line-height: 1.5;">
             1. Scan QR di samping (WiFi atau 4G), masukkan nama Anda.<br/>
-            2. Setiap peserta mendapat kartu <strong>5×5 P·R·I·O·K</strong> unik.<br/>
+            2. Setiap peserta mendapat kartu <strong id="lobbyGridLabel">5×5 P·R·I·O·K</strong> unik.<br/>
             3. Dengarkan clue MC, tandai kotak yang tepat.<br/>
             4. Lengkapi <strong>1 garis lurus/diagonal</strong>, tekan <strong>CLAIM PELINDO!</strong> untuk masuk <strong>Podium Top 3</strong>!
           </p>
-          <button class="primary" style="width: fit-content; font-size: 18px; padding: 14px 28px;" onclick="hostAction('/api/host/start')">
-            MULAI PERMAINAN [SPACE]
-          </button>
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <button class="primary" style="width: fit-content; font-size: 18px; padding: 14px 28px;" onclick="hostAction('/api/host/start')">
+              MULAI PERMAINAN [SPACE]
+            </button>
+            <div class="grid-switch" aria-label="Pilih Ukuran Grid">
+              <button type="button" data-grid-btn="5" class="active" onclick="setGridSize(5)">5×5 P·R·I·O·K</button>
+              <button type="button" data-grid-btn="7" onclick="setGridSize(7)">7×7 P·E·L·I·N·D·O</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -203,9 +212,13 @@
   </div>
 
   <div class="bottombar">
-    <div class="btn-group">
+    <div class="btn-group" style="align-items: center;">
       <button class="primary" onclick="hostAction('/api/host/next-clue')">Clue Berikutnya [Space]</button>
       <button class="success" onclick="hostAction('/api/host/reveal')">Reveal Jawaban [Enter]</button>
+      <div class="grid-switch" aria-label="Switch Grid">
+        <button type="button" data-grid-btn="5" class="active" onclick="setGridSize(5)">5×5 P·R·I·O·K</button>
+        <button type="button" data-grid-btn="7" onclick="setGridSize(7)">7×7 P·E·L·I·N·D·O</button>
+      </div>
       <button onclick="toggleFullscreen()">Fullscreen [F]</button>
       <button class="danger" onclick="if(confirm('Reset game & kartu baru?')) hostAction('/api/host/reset')">Reset Game</button>
     </div>
@@ -214,14 +227,29 @@
 
   <script>
     let lastClueKey = '';
+    let currentGridSize = 5;
+    let currentPhase = 'LOBBY';
 
     async function loadQr() {
       const res = await fetch('/api/qr');
       document.getElementById('qrBox').innerHTML = await res.text();
     }
 
-    async function hostAction(endpoint) {
-      await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    async function hostAction(endpoint, payload = {}) {
+      const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        document.getElementById('hostStatus').textContent = `Gagal (${res.status}): ${data.reason || 'cek koneksi server'}`;
+      }
+      return res.ok;
+    }
+
+    async function setGridSize(nextSize) {
+      if (nextSize === currentGridSize) return;
+      if (currentPhase !== 'LOBBY' && !confirm(`Ganti ke ${nextSize}×${nextSize} akan me-reset permainan & kartu pemain. Lanjutkan?`)) {
+        return;
+      }
+      await hostAction('/api/host/set-grid', { gridSize: nextSize });
     }
 
     function startTimerBar() {
@@ -235,6 +263,15 @@
     }
 
     function renderState(st) {
+      currentGridSize = st.gridSize || 5;
+      currentPhase = st.phase;
+      const gridLabel = st.gridLabel || (currentGridSize === 7 ? '7×7 P·E·L·I·N·D·O' : '5×5 P·R·I·O·K');
+      document.getElementById('gridTitleBadge').textContent = `· ${gridLabel}`;
+      document.getElementById('lobbyGridLabel').textContent = gridLabel;
+      document.querySelectorAll('[data-grid-btn]').forEach((btn) => {
+        btn.classList.toggle('active', Number(btn.dataset.gridBtn) === currentGridSize);
+      });
+
       document.getElementById('playerCount').textContent = st.playerCount;
       document.getElementById('callProgress').textContent = `${st.callIndex} / ${st.totalCalls}`;
 
@@ -255,7 +292,9 @@
       }
 
       if (st.currentClue) {
-        document.getElementById('colPill').textContent = `KOLOM ${st.currentClue.col} · ${st.currentClue.colName}`;
+        const pill = document.getElementById('colPill');
+        pill.textContent = `BAB: ${st.currentClue.bab}`;
+        pill.style.borderColor = st.currentClue.babColor || 'var(--cyan)';
         document.getElementById('cluePrompt').textContent = st.currentClue.cluePrompt;
 
         const clueKey = `${st.callIndex}-${st.currentClue.revealed}`;
@@ -267,11 +306,14 @@
         const rbox = document.getElementById('revealBox');
         if (st.currentClue.revealed) {
           rbox.classList.add('show');
-          document.getElementById('revealTitle').textContent = `✅ ${st.currentClue.shortLabel} — ${st.currentClue.answerDetail}`;
-          document.getElementById('revealInsight').textContent = st.currentClue.mcInsight;
+          document.getElementById('revealTitle').textContent = `✅ ${st.currentClue.shortLabel}`;
+          document.getElementById('revealInsight').textContent = `Bab: ${st.currentClue.bab}`;
         } else {
           rbox.classList.remove('show');
         }
+      } else {
+        lastClueKey = '';
+        document.getElementById('revealBox').classList.remove('show');
       }
 
       const wList = document.getElementById('winnersList');
@@ -291,7 +333,7 @@
 
       const hGrid = document.getElementById('historyGrid');
       hGrid.innerHTML = st.revealedHistory.map((h) =>
-        `<span class="hist-pill"><b>${h.col}</b>${escapeHtml(h.shortLabel)}</span>`
+        `<span class="hist-pill"><b>${escapeHtml(h.bab)}</b>${escapeHtml(h.shortLabel)}</span>`
       ).join('');
     }
 
@@ -321,7 +363,7 @@
     const es = new EventSource('/api/host/events');
     es.onmessage = (ev) => renderState(JSON.parse(ev.data));
     es.onerror = () => { document.getElementById('hostStatus').textContent = 'Menyambung ulang...'; };
-    es.onopen = () => { document.getElementById('hostStatus').textContent = 'Live SSE aktif (127.0.0.1:3000)'; };
+    es.onopen = () => { document.getElementById('hostStatus').textContent = `Live SSE aktif (${window.location.host})`; };
   </script>
 </body>
 </html>
