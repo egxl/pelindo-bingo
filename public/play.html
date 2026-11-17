@@ -31,10 +31,11 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10px 8px 18px;
+      padding: 6px 5px 12px;
       user-select: none;
     }
-    .app { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 9px; }
+    .app { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 6px; }
+    .ico { display: inline-block; vertical-align: middle; flex-shrink: 0; }
 
     /* Top Ticket Stub */
     .topbar {
@@ -44,9 +45,9 @@
       gap: 8px;
       background: var(--yellow);
       border: 3px solid var(--ink);
-      box-shadow: 4px 4px 0 var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
       border-radius: 0;
-      padding: 8px 12px;
+      padding: 6px 10px;
     }
     .brand {
       font-family: var(--font-display);
@@ -86,12 +87,12 @@
     .status-bar {
       background: var(--surface);
       border: 3px solid var(--ink);
-      box-shadow: 4px 4px 0 var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
       border-radius: 0;
-      padding: 8px 10px;
+      padding: 6px 9px;
       font-size: 12.5px;
       font-weight: 700;
-      line-height: 1.3;
+      line-height: 1.28;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -116,18 +117,18 @@
     .col-headers {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 6px;
+      gap: 5px;
     }
     .col-headers.g7 {
       grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 4px;
+      gap: 2.5px;
     }
     .col-h {
       text-align: center;
       font-family: var(--font-display);
       font-weight: 900;
       font-size: 18px;
-      padding: 5px 0;
+      padding: 4px 0;
       border-radius: 0;
       border: 2.5px solid var(--ink);
       box-shadow: 2px 2px 0 var(--ink);
@@ -137,7 +138,7 @@
     .col-h:nth-child(even) { background: var(--cyan); }
     .col-headers.g7 .col-h {
       font-size: 14px;
-      padding: 4px 0;
+      padding: 3px 0;
       border-width: 2px;
     }
 
@@ -147,7 +148,7 @@
       border: 3px solid var(--ink);
       box-shadow: 3px 3px 0 var(--ink);
       border-radius: 0;
-      padding: 6px 10px;
+      padding: 5px 8px;
       font-size: 12px;
       font-weight: 700;
       color: var(--muted);
@@ -155,7 +156,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 6px;
-      min-height: 34px;
+      min-height: 30px;
     }
     .preview-left {
       display: flex;
@@ -188,17 +189,20 @@
       color: var(--ink);
       white-space: nowrap;
       flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     /* Bingo Tile Grid */
     .grid {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 6px;
+      gap: 5px;
     }
     .grid.g7 {
       grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 4px;
+      gap: 2.5px;
     }
     .tile {
       position: relative;
@@ -211,15 +215,17 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 9px 4px 4px;
-      font-size: 11px;
+      padding: 8px 3px 3px;
+      font-size: 13px;
       font-weight: 800;
-      line-height: 1.12;
+      line-height: 1.08;
       color: var(--ink);
       cursor: pointer;
       transition: transform 0.06s, box-shadow 0.06s, background-color 0.06s;
       word-break: normal;
       overflow-wrap: break-word;
+      hyphens: manual;
+      -webkit-hyphens: manual;
       overflow: hidden;
     }
     .tile:not(.free)::before {
@@ -228,21 +234,24 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 5px;
+      height: 4px;
       background: var(--bab-color, var(--ink));
       border-bottom: 1.5px solid var(--ink);
     }
     .grid.g7 .tile {
+      aspect-ratio: 1 / 1.12;
       border-width: 2px;
       box-shadow: 2px 2px 0 var(--ink);
-      padding: 7px 2px 2px;
-      min-height: 44px;
-      font-size: clamp(7.2px, 1.95vw, 9.8px);
-      line-height: 1.08;
+      padding: 6px 2px 2px;
+      min-height: 46px;
+      font-size: 10px;
+      line-height: 1.06;
       overflow-wrap: break-word;
+      hyphens: manual;
+      -webkit-hyphens: manual;
     }
     .grid.g7 .tile:not(.free)::before {
-      height: 4px;
+      height: 3.5px;
       border-bottom-width: 1px;
     }
     .tile:active {
@@ -256,30 +265,34 @@
       box-shadow: 0 0 0 var(--ink);
     }
     .tile.marked::after {
-      content: '✓';
+      content: '';
       position: absolute;
       top: 0;
       right: 0;
-      font-size: 9px;
-      font-weight: 900;
-      line-height: 1;
-      padding: 1px 3px;
-      background: var(--ink);
-      color: var(--yellow);
+      width: 13px;
+      height: 13px;
+      background-color: var(--ink);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFD93D' stroke-width='4' stroke-linecap='square'%3E%3Cpolyline points='4 12 10 18 20 6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 9px 9px;
     }
     .grid.g7 .tile.marked::after {
-      font-size: 8px;
-      padding: 1px 2px;
+      width: 10px;
+      height: 10px;
+      background-size: 7px 7px;
     }
     .tile.free {
       background: var(--green);
       color: var(--ink);
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 900;
       padding: 4px;
       cursor: default;
+      flex-direction: column;
+      gap: 2px;
     }
-    .grid.g7 .tile.free { font-size: clamp(7.5px, 1.9vw, 9.5px); padding: 2px; }
+    .grid.g7 .tile.free { font-size: clamp(7px, 1.8vw, 9px); padding: 2px; gap: 1px; }
     .tile.win-line {
       background: var(--amber);
       color: var(--ink);
@@ -331,6 +344,10 @@
       background: #E5E4DC;
       color: var(--muted);
       cursor: not-allowed;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       transition: transform 0.06s, box-shadow 0.06s, background-color 0.06s;
     }
     .claim-btn.ready {
@@ -482,10 +499,103 @@
       'Business Challenge': '#FF6B6B',
     };
 
+    const ICONS = {
+      trophy: '<svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M6 4h12v5a6 6 0 0 1-12 0V4z" fill="#FFD93D"></path><path d="M6 6H3v3a3 3 0 0 0 3 3"></path><path d="M18 6h3v3a3 3 0 0 1-3 3"></path><line x1="12" y1="15" x2="12" y2="20"></line><line x1="8" y1="20" x2="16" y2="20"></line></svg>',
+      check: '<svg class="ico" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="square" aria-hidden="true"><polyline points="4 12 10 18 20 6"></polyline></svg>',
+      star: '<svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="#FFD93D" stroke="currentColor" stroke-width="2.4" stroke-linejoin="miter" aria-hidden="true"><polygon points="12 2 15 9 22 9 16.5 14 18.5 21 12 17 5.5 21 7.5 14 2 9 9 9 12 2"></polygon></svg>',
+    };
+
     let session = null;
     let marked = new Set([12]);
     let stateVersion = 0;
     let winningLine = null;
+    const fittedFontCache = new Map();
+
+    const SYLLABLE_MAP = {
+      oktober: 'Ok\u00ADto\u00ADber',
+      belawan: 'Be\u00ADla\u00ADwan',
+      regional: 'Re\u00ADgio\u00ADnal',
+      tanjung: 'Tan\u00ADjung',
+      makassar: 'Ma\u00ADkas\u00ADsar',
+      surabaya: 'Su\u00ADra\u00ADba\u00ADya',
+      pelindo: 'Pe\u00ADlin\u00ADdo',
+      sinergi: 'Si\u00ADner\u00ADgi',
+      lokaseva: 'Lo\u00ADka\u00ADse\u00ADva',
+      danantara: 'Da\u00ADnan\u00ADta\u00ADra',
+      subholding: 'Sub\u00ADhold\u00ADing',
+      shipping: 'Ship\u00ADping',
+      trucking: 'Truck\u00ADing',
+      karantina: 'Ka\u00ADran\u00ADti\u00ADna',
+      closing: 'Clos\u00ADing',
+      stowage: 'Stow\u00ADage',
+      inaportnet: 'Ina\u00ADport\u00ADnet',
+      dwelling: 'Dwel\u00ADling',
+      induction: 'in\u00ADduc\u00ADtion',
+      maritim: 'Ma\u00ADri\u00ADtim',
+      control: 'Con\u00ADtrol',
+      spreader: 'Spread\u00ADer',
+      breakwater: 'Break\u00ADwa\u00ADter',
+      hinterland: 'Hin\u00ADter\u00ADland',
+      kalibaru: 'Ka\u00ADli\u00ADba\u00ADru',
+      penumpukan: 'pe\u00ADnum\u00ADpuk\u00ADan',
+      cikarang: 'Ci\u00ADka\u00ADrang',
+      appointment: 'Ap\u00ADpoint\u00ADment',
+      digital: 'di\u00ADgi\u00ADtal',
+    };
+
+    function applyCase(source, syllabified) {
+      const srcChars = Array.from(source);
+      let idx = 0;
+      return Array.from(syllabified)
+        .map((ch) => (ch === '\u00AD' ? ch : (srcChars[idx++] || ch)))
+        .join('');
+    }
+
+    function hyphenateLabel(label) {
+      return String(label || '').replace(/[A-Za-z]{7,}/g, (word) => {
+        const key = word.toLowerCase();
+        if (SYLLABLE_MAP[key]) return applyCase(word, SYLLABLE_MAP[key]);
+        // Fallback: split between vowel-cluster + consonant-cluster + vowel for long unknown words
+        return word.replace(/([aeiouy])([bcdfghjklmnpqrstvwxz]{1,2})(?=[aeiouy][a-z]{2,})/gi, '$1\u00AD$2');
+      });
+    }
+
+    function fitTileFonts() {
+      const gridEl = $('grid');
+      if (!session || !gridEl) return;
+      const gridSize = session.gridSize || 5;
+      const gridWidth = gridEl.clientWidth;
+      if (!gridWidth) return;
+
+      const maxPx = gridSize === 7 ? 14.5 : 19;
+      const minPx = gridSize === 7 ? 7.5 : 9.5;
+      const layoutKey = `${gridSize}x${gridWidth}`;
+      const tiles = gridEl.children;
+
+      for (let i = 0; i < tiles.length; i++) {
+        const div = tiles[i];
+        const cell = session.grid[i];
+        if (!cell || cell.isFree) continue;
+
+        const cacheKey = `${layoutKey}:${i}:${cell.shortLabel}`;
+        const cached = fittedFontCache.get(cacheKey);
+        if (cached) {
+          div.style.fontSize = `${cached}px`;
+          continue;
+        }
+
+        let size = maxPx;
+        while (size > minPx) {
+          div.style.fontSize = `${size}px`;
+          if (div.scrollWidth <= div.clientWidth && div.scrollHeight <= div.clientHeight) {
+            break;
+          }
+          size -= 0.5;
+        }
+        div.style.fontSize = `${size}px`;
+        fittedFontCache.set(cacheKey, size);
+      }
+    }
 
     const $ = (id) => document.getElementById(id);
 
@@ -552,7 +662,7 @@
           <span class="preview-bab" style="background:${babColor};">${escapeHtml(cell.bab || '')}</span>
           <strong>${escapeHtml(cell.shortLabel)}</strong>
         </span>
-        <span class="preview-state">${isMarked ? 'DITANDAI ✓' : 'BATAL'}</span>
+        <span class="preview-state">${isMarked ? `<span>DITANDAI</span>${ICONS.check}` : '<span>BATAL</span>'}</span>
       `;
     }
 
@@ -565,11 +675,13 @@
       session.grid.forEach((cell, idx) => {
         const div = document.createElement('div');
         div.className = 'tile' + (cell.isFree ? ' free' : '') + (marked.has(idx) && !cell.isFree ? ' marked' : '');
-        if (!cell.isFree) {
+        if (cell.isFree) {
+          div.innerHTML = `${ICONS.star}<span>FREE PELINDO</span>`;
+        } else {
           div.style.setProperty('--bab-color', CHAPTER_COLORS[cell.bab] || '#0A0A0A');
+          div.textContent = hyphenateLabel(cell.shortLabel);
         }
         if (winningLine && winningLine.includes(idx)) div.classList.add('win-line');
-        div.textContent = cell.shortLabel;
         if (!cell.isFree && !session.wonRank) {
           div.setAttribute('role', 'button');
           div.setAttribute('tabindex', '0');
@@ -593,22 +705,27 @@
         }
         gridEl.appendChild(div);
       });
+      fitTileFonts();
       updateClaimButton();
     }
+
+    window.addEventListener('resize', () => {
+      if (session) fitTileFonts();
+    });
 
     function updateClaimButton() {
       const btn = $('claimBtn');
       if (session.wonRank) {
         btn.disabled = true;
         btn.className = 'claim-btn ready';
-        btn.textContent = `🏆 JUARA #${session.wonRank} — MAJU KE PANGGUNG!`;
+        btn.innerHTML = `${ICONS.trophy}<span>JUARA #${session.wonRank} — MAJU KE PANGGUNG!</span>`;
         return;
       }
       const line = findCompletedLine();
       if (line) {
         btn.disabled = false;
         btn.className = 'claim-btn ready';
-        btn.textContent = '🏆 CLAIM PELINDO!';
+        btn.innerHTML = `${ICONS.trophy}<span>CLAIM PELINDO!</span>`;
       } else {
         btn.disabled = true;
         btn.className = 'claim-btn';

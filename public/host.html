@@ -36,12 +36,18 @@
       user-select: none;
     }
 
+    .ico {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
     /* Top Marquee Bar */
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 24px;
+      padding: 7px 18px;
       background: var(--yellow);
       border-bottom: 4px solid var(--ink);
       gap: 12px;
@@ -65,7 +71,7 @@
     }
     .title {
       font-family: var(--font-display);
-      font-size: clamp(22px, 2.1vw, 30px);
+      font-size: clamp(22px, 2vw, 28px);
       font-weight: 900;
       letter-spacing: -0.02em;
       color: var(--ink);
@@ -90,8 +96,8 @@
       background: var(--surface);
       border: 3px solid var(--ink);
       box-shadow: 3px 3px 0 var(--ink);
-      padding: 6px 12px;
-      font-size: 14px;
+      padding: 5px 11px;
+      font-size: 13.5px;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0.03em;
@@ -102,7 +108,7 @@
     }
     .stat-box span {
       font-family: var(--font-mono);
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 900;
       font-variant-numeric: tabular-nums;
       background: var(--cyan);
@@ -112,8 +118,11 @@
     .sfx-btn {
       background: var(--green);
       font-family: var(--font-mono);
-      font-size: 12.5px;
-      padding: 7px 11px;
+      font-size: 12px;
+      padding: 6px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -125,17 +134,17 @@
     /* Main Workspace Grid */
     .main {
       flex: 1;
-      padding: clamp(14px, 2vh, 22px) clamp(20px, 2.2vw, 32px);
+      padding: 10px 14px;
       display: grid;
-      grid-template-columns: 1.55fr 0.95fr;
-      gap: clamp(16px, 2vw, 24px);
+      grid-template-columns: 1.42fr 1.08fr;
+      gap: 14px;
       min-height: 0;
     }
     .panel {
       background: var(--surface);
       border: 4px solid var(--ink);
-      box-shadow: 8px 8px 0 var(--ink);
-      padding: clamp(16px, 2.2vh, 24px);
+      box-shadow: 5px 5px 0 var(--ink);
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
       min-height: 0;
@@ -145,8 +154,8 @@
     /* Lobby Mode */
     .lobby-grid {
       display: grid;
-      grid-template-columns: minmax(210px, min(27vw, 38vh)) 1fr;
-      gap: clamp(18px, 2.4vw, 28px);
+      grid-template-columns: minmax(200px, min(25vw, 35vh)) 1fr;
+      gap: clamp(16px, 2vw, 24px);
       align-items: center;
       height: 100%;
       min-height: 0;
@@ -155,7 +164,7 @@
       background: var(--yellow);
       border: 4px solid var(--ink);
       box-shadow: 6px 6px 0 var(--ink);
-      padding: clamp(10px, 1.5vh, 16px);
+      padding: clamp(10px, 1.4vh, 14px);
     }
     .qr-inner {
       background: #FFFFFF;
@@ -168,21 +177,21 @@
     .qr-inner svg { width: 100%; height: auto; display: block; }
     .join-url {
       margin-top: 10px;
-      padding: 8px 10px;
+      padding: 7px 10px;
       background: var(--surface);
       border: 3px solid var(--ink);
       box-shadow: 4px 4px 0 var(--ink);
       font-family: var(--font-mono);
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 800;
       color: var(--ink);
       word-break: break-all;
       text-align: center;
     }
-    .lobby-copy { display: flex; flex-direction: column; gap: clamp(10px, 1.6vh, 16px); min-width: 0; }
+    .lobby-copy { display: flex; flex-direction: column; gap: clamp(8px, 1.3vh, 13px); min-width: 0; }
     .lobby-headline {
       font-family: var(--font-display);
-      font-size: clamp(24px, min(2.8vw, 4.4vh), 42px);
+      font-size: clamp(22px, min(2.5vw, 4vh), 38px);
       font-weight: 900;
       line-height: 1.08;
       letter-spacing: -0.02em;
@@ -196,44 +205,112 @@
       padding: 2px 10px;
       transform: rotate(-1.5deg);
     }
-    .steps-list { display: flex; flex-direction: column; gap: clamp(7px, 1.1vh, 10px); }
+    .steps-list { display: flex; flex-direction: column; gap: clamp(5px, 0.9vh, 8px); }
     .step-row {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: clamp(14px, min(1.3vw, 2.2vh), 17px);
+      font-size: clamp(13px, min(1.25vw, 2vh), 16px);
       font-weight: 700;
-      line-height: 1.3;
+      line-height: 1.28;
       color: var(--ink);
     }
     .step-num {
-      width: 28px;
-      height: 28px;
-      flex: 0 0 28px;
+      width: 26px;
+      height: 26px;
+      flex: 0 0 26px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-family: var(--font-mono);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
       border: 2.5px solid var(--ink);
       box-shadow: 2px 2px 0 var(--ink);
     }
-    .lobby-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 2px; }
+    .lobby-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .start-cta {
-      font-size: clamp(14px, 1.35vw, 17px);
-      padding: 12px 20px;
+      font-size: clamp(13px, 1.25vw, 16px);
+      padding: 11px 18px;
       box-shadow: 5px 5px 0 var(--ink);
     }
+    .join-feed-box {
+      background: var(--bg);
+      border: 3px solid var(--ink);
+      box-shadow: 4px 4px 0 var(--ink);
+      padding: 8px 10px;
+    }
+    .join-feed-head {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .join-feed-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .join-chip {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 800;
+      background: var(--surface);
+      border: 2px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
+      padding: 3px 7px;
+      white-space: nowrap;
+    }
+    .join-chip b { color: var(--ink); background: var(--cyan); padding: 0 4px; margin-right: 4px; border: 1.5px solid var(--ink); }
 
     /* Stage Clue Mode */
     .stage-view {
       display: flex;
       flex-direction: column;
       height: 100%;
-      gap: clamp(10px, 1.8vh, 16px);
+      gap: 10px;
       min-height: 0;
     }
+    .sleeping-alert {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 14px;
+      background: var(--coral);
+      border: 3px solid var(--ink);
+      box-shadow: 4px 4px 0 var(--ink);
+      font-family: var(--font-display);
+      font-size: clamp(13px, 1.3vw, 16px);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--ink);
+      animation: sirenBlink 0.7s steps(2, end) infinite;
+      flex-shrink: 0;
+    }
+    .sleeping-alert.show { display: flex; }
+    @keyframes sirenBlink {
+      0% { background: var(--coral); }
+      50% { background: var(--yellow); }
+      100% { background: var(--coral); }
+    }
+    .sleeping-left { display: flex; align-items: center; gap: 8px; }
+    .sleeping-badge {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 900;
+      background: var(--surface);
+      border: 2px solid var(--ink);
+      padding: 2px 7px;
+      white-space: nowrap;
+    }
+
     .col-pill {
       display: inline-flex;
       align-items: center;
@@ -243,31 +320,45 @@
       border: 3px solid var(--ink);
       box-shadow: 4px 4px 0 var(--ink);
       font-family: var(--font-display);
-      font-size: clamp(15px, 1.5vw, 19px);
+      font-size: clamp(14px, 1.4vw, 18px);
       font-weight: 900;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: var(--ink);
       width: fit-content;
+      flex-shrink: 0;
     }
     .clue-prompt {
-      font-size: clamp(24px, min(3vw, 4.5vh), 42px);
+      flex: 1;
+      display: flex;
+      align-items: center;
+      font-size: clamp(28px, min(3.7vw, 5.2vh), 52px);
       font-weight: 900;
-      line-height: 1.18;
+      line-height: 1.14;
       color: var(--ink);
       background: var(--bg);
       border: 3px solid var(--ink);
       box-shadow: 5px 5px 0 var(--ink);
-      padding: clamp(14px, 2.2vh, 22px) 22px;
+      padding: 14px 20px;
+      min-height: 0;
+    }
+    .stage-view.has-reveal .clue-prompt {
+      font-size: clamp(24px, min(3vw, 4vh), 42px);
+      padding: 12px 18px;
+    }
+    .timer-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
     }
     .timer-track {
-      width: 100%;
+      flex: 1;
       height: 18px;
       background: var(--surface);
       border: 3px solid var(--ink);
       box-shadow: 3px 3px 0 var(--ink);
       overflow: hidden;
-      flex-shrink: 0;
     }
     .timer-fill {
       height: 100%;
@@ -281,14 +372,31 @@
       );
       border-right: 3px solid var(--ink);
     }
+    .timer-countdown {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      min-width: 44px;
+      text-align: center;
+      padding: 2px 6px;
+      background: var(--surface);
+      border: 3px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+    .timer-countdown.urgent {
+      background: var(--coral);
+    }
+
     .reveal-box {
-      margin-top: auto;
-      padding: clamp(12px, 1.8vh, 18px) 20px;
+      margin-top: 0;
+      padding: 12px 16px;
       background: var(--green);
       border: 4px solid var(--ink);
-      box-shadow: 6px 6px 0 var(--ink);
+      box-shadow: 5px 5px 0 var(--ink);
       display: none;
       color: var(--ink);
+      flex-shrink: 0;
     }
     .reveal-box.show {
       display: block;
@@ -300,7 +408,7 @@
     }
     .reveal-kicker {
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0.08em;
@@ -308,34 +416,73 @@
     }
     .reveal-title {
       font-family: var(--font-display);
-      font-size: clamp(24px, 2.5vw, 34px);
+      font-size: clamp(26px, 2.8vw, 38px);
       font-weight: 900;
       color: var(--ink);
       margin-bottom: 4px;
       line-height: 1.1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .reveal-insight { font-size: 17px; font-weight: 800; color: var(--ink); line-height: 1.35; }
+    .reveal-insight { font-size: 16px; font-weight: 800; color: var(--ink); line-height: 1.3; }
+    .reveal-impact {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: var(--surface);
+      border: 2.5px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      padding: 5px 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 900;
+    }
 
-    /* Right Column: Podium + History */
+    /* Right Column: Podium + Radar Leaderboard + History */
+    .right-panel { gap: 10px; }
+    .podium-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-shrink: 0;
+    }
     .podium-title {
+      flex: 1;
       background: var(--yellow);
       border: 3px solid var(--ink);
-      box-shadow: 4px 4px 0 var(--ink);
-      padding: 9px 14px;
+      box-shadow: 3px 3px 0 var(--ink);
+      padding: 7px 12px;
       font-family: var(--font-display);
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 900;
       color: var(--ink);
-      margin-bottom: 14px;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.03em;
       text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
     }
-    .winners-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .unmask-all-btn {
+      padding: 6px 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--violet);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+    .winners-list { display: flex; flex-direction: column; gap: 7px; flex-shrink: 0; }
     .winners-empty {
       background: var(--bg);
       border: 2px dashed var(--ink);
-      padding: 12px 14px;
-      font-size: 14px;
+      padding: 8px 12px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--muted);
     }
@@ -343,26 +490,41 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding: 11px 14px;
+      gap: 8px;
+      padding: 7px 11px;
       border: 3px solid var(--ink);
-      box-shadow: 4px 4px 0 var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
       background: var(--yellow);
       color: var(--ink);
+      cursor: pointer;
+      transition: transform 0.06s, box-shadow 0.06s;
+    }
+    .winner-card:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--ink);
     }
     .winner-card.rank-1 { background: var(--yellow); }
     .winner-card.rank-2 { background: var(--cyan); }
     .winner-card.rank-3 { background: var(--coral); }
+    .winner-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
     .winner-rank {
       font-family: var(--font-mono);
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 900;
       background: var(--surface);
       border: 2px solid var(--ink);
-      padding: 2px 8px;
-      margin-right: 10px;
+      padding: 1px 6px;
+      flex-shrink: 0;
     }
-    .winner-name { font-size: 18px; font-weight: 900; color: var(--ink); }
+    .winner-name {
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--ink);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .winner-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .winner-meta {
       font-family: var(--font-mono);
       font-size: 12.5px;
@@ -370,24 +532,176 @@
       color: var(--ink);
       white-space: nowrap;
     }
+    .unmask-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 900;
+      background: var(--surface);
+      border: 2px solid var(--ink);
+      padding: 2px 6px;
+      text-transform: uppercase;
+    }
+    .unmask-tag.revealed { background: var(--green); }
 
+    /* Crowd Radar & Censored Leaderboard */
+    .radar-section {
+      border-top: 3px solid var(--ink);
+      padding-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+    .radar-kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .kpi-box {
+      background: var(--bg);
+      border: 2.5px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      padding: 6px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .kpi-box.hot { background: var(--coral); }
+    .kpi-box.warm { background: var(--yellow); }
+    .kpi-box.cool { background: var(--cyan); }
+    .kpi-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .kpi-val {
+      font-family: var(--font-mono);
+      font-size: clamp(16px, 1.5vw, 20px);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .lb-head {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .lb-head-left { display: flex; align-items: center; gap: 6px; }
+    .lb-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .lb-empty {
+      background: var(--bg);
+      border: 2px dashed var(--ink);
+      padding: 7px 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .lb-row {
+      display: grid;
+      grid-template-columns: 36px minmax(100px, 1fr) 92px auto;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 9px;
+      background: var(--bg);
+      border: 2px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
+      font-size: 14.5px;
+      font-weight: 800;
+    }
+    .lb-row.bingo-ready { background: var(--yellow); }
+    .lb-rank {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 900;
+      background: var(--surface);
+      border: 1.5px solid var(--ink);
+      text-align: center;
+      padding: 1px 0;
+    }
+    .lb-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .lb-name small {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+    .lb-segs {
+      display: flex;
+      gap: 2px;
+      height: 12px;
+    }
+    .lb-seg {
+      flex: 1;
+      border: 1.5px solid var(--ink);
+      background: var(--surface);
+    }
+    .lb-seg.hit { background: var(--green); }
+    .lb-seg.bingo { background: var(--coral); }
+    .lb-score {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    /* Revealed History */
     .history-wrap {
       flex: 1;
       overflow-y: auto;
       border-top: 3px solid var(--ink);
-      padding-top: 12px;
-      min-height: 0;
+      padding-top: 7px;
+      min-height: 60px;
     }
     .history-label {
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
       color: var(--ink);
-      margin-bottom: 10px;
-      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
     }
-    .history-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .history-legend {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+    }
+    .leg-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      border: 1.5px solid var(--ink);
+      padding: 1px 4px;
+      font-weight: 900;
+    }
+    .history-grid { display: flex; flex-wrap: wrap; gap: 6px; }
     .hist-pill {
       display: inline-flex;
       align-items: stretch;
@@ -395,28 +709,28 @@
       box-shadow: 2px 2px 0 var(--ink);
       background: var(--bg);
       color: var(--ink);
-      font-size: 12.5px;
-      font-weight: 800;
+      font-size: 15px;
+      font-weight: 900;
     }
     .hist-pill b {
       padding: 4px 7px;
       border-right: 2px solid var(--ink);
       font-family: var(--font-mono);
-      font-size: 10.5px;
+      font-size: 11.5px;
       font-weight: 900;
       text-transform: uppercase;
       display: inline-flex;
       align-items: center;
     }
     .hist-pill span {
-      padding: 4px 8px;
+      padding: 4px 9px;
       display: inline-flex;
       align-items: center;
     }
 
     /* Bottom Controls */
     .bottombar {
-      padding: 10px 24px;
+      padding: 7px 18px;
       border-top: 4px solid var(--ink);
       background: var(--surface);
       display: flex;
@@ -507,7 +821,14 @@
     <div class="stats">
       <div class="stat-box">Pemain <span id="playerCount">0</span></div>
       <div class="stat-box">Call <span id="callProgress">0 / 62</span></div>
-      <button id="sfxBtn" type="button" class="sfx-btn" onclick="toggleSfx()">🔊 SFX: ON [M]</button>
+      <button id="sfxBtn" type="button" class="sfx-btn" onclick="toggleSfx()">
+        <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor"></polygon>
+          <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+          <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
+        </svg>
+        <span>SFX: ON [M]</span>
+      </button>
     </div>
   </div>
 
@@ -553,31 +874,117 @@
               <button type="button" data-grid-btn="7" onclick="setGridSize(7)">7×7 P·E·L·I·N·D·O</button>
             </div>
           </div>
+          <div class="join-feed-box">
+            <div class="join-feed-head">
+              <svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <circle cx="12" cy="12" r="4"></circle>
+                <line x1="12" y1="2" x2="12" y2="5"></line>
+                <line x1="12" y1="19" x2="12" y2="22"></line>
+              </svg>
+              <span>PESERTA TERBARU BERGABUNG (LIVE)</span>
+            </div>
+            <div class="join-feed-list" id="lobbyJoinFeed">
+              <span class="join-chip">Menunggu peserta scan QR...</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- PLAYING / ENDED -->
       <div id="stageView" class="stage-view hidden">
+        <div class="sleeping-alert" id="sleepingBingoAlert" role="alert">
+          <div class="sleeping-left">
+            <svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="miter" aria-hidden="true">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span id="sleepingBingoText">PERINGATAN: 0 KARTU SUDAH 1 GARIS PENUH — BELUM CLAIM!</span>
+          </div>
+          <span class="sleeping-badge" id="sleepingBingoPct">0%</span>
+        </div>
+
         <div class="col-pill" id="colPill">BAB: COMPANY PROFILE</div>
         <div class="clue-prompt" id="cluePrompt">Menunggu clue pertama...</div>
-        <div class="timer-track"><div class="timer-fill" id="timerBar"></div></div>
+        <div class="timer-row">
+          <div class="timer-track"><div class="timer-fill" id="timerBar"></div></div>
+          <div class="timer-countdown" id="timerCountdown">6s</div>
+        </div>
         <div class="reveal-box" id="revealBox">
           <div class="reveal-kicker">JAWABAN RESMI · KOTAK TERBUKA</div>
           <div class="reveal-title" id="revealTitle"></div>
           <div class="reveal-insight" id="revealInsight"></div>
+          <div class="reveal-impact hidden" id="revealImpact"></div>
         </div>
       </div>
     </div>
 
-    <!-- Right Podium & History -->
-    <div class="panel">
-      <div class="podium-title">🏆 PODIUM JUARA TOP 3 ("PELINDO!")</div>
+    <!-- Right Podium, Live Leaderboard & History -->
+    <div class="panel right-panel">
+      <div class="podium-head">
+        <div class="podium-title">
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+            <path d="M6 4h12v5a6 6 0 0 1-12 0V4z" fill="#FFFFFF"></path>
+            <path d="M6 6H3v3a3 3 0 0 0 3 3"></path>
+            <path d="M18 6h3v3a3 3 0 0 1-3 3"></path>
+            <line x1="12" y1="15" x2="12" y2="20"></line>
+            <line x1="8" y1="20" x2="16" y2="20"></line>
+          </svg>
+          <span>PODIUM JUARA TOP 3 ("PELINDO!")</span>
+        </div>
+        <button id="revealAllBtn" type="button" class="unmask-all-btn hidden" onclick="unmaskAllWinners()">
+          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true">
+            <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <span>BUKA SEMUA</span>
+        </button>
+      </div>
+
       <div class="winners-list" id="winnersList">
         <div class="winners-empty">Belum ada pemenang. Menunggu 1 garis penuh...</div>
       </div>
 
+      <div class="radar-section">
+        <div class="radar-kpis">
+          <div class="kpi-box hot" id="kpiBingoBox">
+            <span class="kpi-label">Siap Bingo</span>
+            <span class="kpi-val" id="kpiBingo">0 (0%)</span>
+          </div>
+          <div class="kpi-box warm">
+            <span class="kpi-label">Sisa 1 Kotak</span>
+            <span class="kpi-val" id="kpiOneAway">0 (0%)</span>
+          </div>
+          <div class="kpi-box cool">
+            <span class="kpi-label">Sisa 2 Kotak</span>
+            <span class="kpi-val" id="kpiTwoAway">0 (0%)</span>
+          </div>
+        </div>
+
+        <div class="lb-head">
+          <span class="lb-head-left">
+            <svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <circle cx="12" cy="12" r="3" fill="currentColor"></circle>
+            </svg>
+            <span>BALAPAN KE BINGO (NAMA DISENSOR)</span>
+          </span>
+          <span id="lbSubLabel">TOP 5 TERDEKAT</span>
+        </div>
+        <div class="lb-list" id="leaderboardList">
+          <div class="lb-empty">Menunggu reveal pertama untuk hitung progres kartu...</div>
+        </div>
+      </div>
+
       <div class="history-wrap">
-        <div class="history-label">KOTAK SUDAH DI-REVEAL:</div>
+        <div class="history-label">
+          <span>KOTAK SUDAH DI-REVEAL:</span>
+          <span class="history-legend">
+            <span class="leg-dot" style="background: var(--cyan);">CP Profile</span>
+            <span class="leg-dot" style="background: var(--green);">BP Process</span>
+            <span class="leg-dot" style="background: var(--violet);">VE Visited</span>
+            <span class="leg-dot" style="background: var(--coral);">BC Challenge</span>
+          </span>
+        </div>
         <div class="history-grid" id="historyGrid"></div>
       </div>
     </div>
@@ -604,14 +1011,34 @@
       'Visited Experience': '#C4B5FD',
       'Business Challenge': '#FF6B6B',
     };
+    const CHAPTER_SHORT = {
+      'Company Profile': 'CP',
+      'Business Process': 'BP',
+      'Visited Experience': 'VE',
+      'Business Challenge': 'BC',
+    };
+
+    const ICONS = {
+      speakerOn: '<svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor"></polygon><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 5.5a9 9 0 0 1 0 13"></path></svg>',
+      speakerOff: '<svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor"></polygon><line x1="22" y1="9" x2="16" y2="15"></line><line x1="16" y1="9" x2="22" y2="15"></line></svg>',
+      checkSquare: '<svg class="ico" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><rect x="3" y="3" width="18" height="18" fill="#FFFFFF"></rect><polyline points="7 12.5 10.5 16 17.5 8.5"></polyline></svg>',
+      target: '<svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="3" fill="currentColor"></circle></svg>',
+      eye: '<svg class="ico" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>',
+      checkMini: '<svg class="ico" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><polyline points="5 12 10 17 19 7"></polyline></svg>',
+    };
 
     let lastClueKey = '';
     let lastWinnerCount = 0;
+    let lastSleepingCount = 0;
+    let lastGameId = '';
     let hasInitialized = false;
     let currentGridSize = 5;
     let currentPhase = 'LOBBY';
     let sfxEnabled = true;
     let audioCtx = null;
+    let countdownInterval = null;
+    let latestWinners = [];
+    const unmaskedRanks = new Set();
 
     function getAudioCtx() {
       if (!sfxEnabled) return null;
@@ -645,6 +1072,8 @@
         if (kind === 'clue') {
           playTone(ctx, 440, 0, 0.09, 'square', 0.05);
           playTone(ctx, 660, 0.08, 0.12, 'square', 0.055);
+        } else if (kind === 'tick') {
+          playTone(ctx, 880, 0, 0.06, 'square', 0.045);
         } else if (kind === 'reveal') {
           playTone(ctx, 523.25, 0, 0.14, 'triangle', 0.09);
           playTone(ctx, 659.25, 0.07, 0.16, 'triangle', 0.09);
@@ -654,6 +1083,12 @@
           playTone(ctx, 659.25, 0.09, 0.12, 'triangle', 0.1);
           playTone(ctx, 783.99, 0.18, 0.14, 'triangle', 0.1);
           playTone(ctx, 1046.5, 0.28, 0.36, 'square', 0.07);
+        } else if (kind === 'siren') {
+          playTone(ctx, 740, 0, 0.12, 'sawtooth', 0.05);
+          playTone(ctx, 987.77, 0.13, 0.16, 'sawtooth', 0.055);
+        } else if (kind === 'unmask') {
+          playTone(ctx, 587.33, 0, 0.1, 'triangle', 0.08);
+          playTone(ctx, 880, 0.08, 0.22, 'triangle', 0.09);
         }
       } catch {}
     }
@@ -661,7 +1096,7 @@
     function toggleSfx() {
       sfxEnabled = !sfxEnabled;
       const btn = document.getElementById('sfxBtn');
-      btn.textContent = sfxEnabled ? '🔊 SFX: ON [M]' : '🔇 SFX: OFF [M]';
+      btn.innerHTML = `${sfxEnabled ? ICONS.speakerOn : ICONS.speakerOff}<span>${sfxEnabled ? 'SFX: ON [M]' : 'SFX: OFF [M]'}</span>`;
       btn.classList.toggle('muted', !sfxEnabled);
       if (sfxEnabled) getAudioCtx();
     }
@@ -689,17 +1124,174 @@
       await hostAction('/api/host/set-grid', { gridSize: nextSize });
     }
 
+    function stopCountdown() {
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+      }
+      const cd = document.getElementById('timerCountdown');
+      cd.classList.remove('urgent');
+    }
+
     function startTimerBar() {
+      stopCountdown();
       const bar = document.getElementById('timerBar');
+      const cd = document.getElementById('timerCountdown');
       bar.style.transition = 'none';
       bar.style.width = '100%';
+      let secondsLeft = 6;
+      cd.textContent = `${secondsLeft}s`;
+
       setTimeout(() => {
         bar.style.transition = 'width 6s linear';
         bar.style.width = '0%';
       }, 50);
+
+      countdownInterval = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft <= 0) {
+          cd.textContent = '0s';
+          cd.classList.add('urgent');
+          clearInterval(countdownInterval);
+          countdownInterval = null;
+          return;
+        }
+        cd.textContent = `${secondsLeft}s`;
+        if (secondsLeft <= 3) {
+          cd.classList.add('urgent');
+          playSfx('tick');
+        }
+      }, 1000);
+    }
+
+    function renderWinners(winners) {
+      latestWinners = winners || [];
+      const wList = document.getElementById('winnersList');
+      const revealAllBtn = document.getElementById('revealAllBtn');
+
+      if (latestWinners.length === 0) {
+        revealAllBtn.classList.add('hidden');
+        wList.innerHTML = '<div class="winners-empty">Belum ada pemenang. Menunggu 1 garis penuh...</div>';
+        return;
+      }
+
+      const anyMasked = latestWinners.some((w) => !unmaskedRanks.has(w.rank));
+      revealAllBtn.classList.toggle('hidden', !anyMasked);
+
+      wList.innerHTML = latestWinners.map((w) => {
+        const isUnmasked = unmaskedRanks.has(w.rank);
+        const displayName = isUnmasked ? w.name : (w.maskedName || w.name);
+        return `
+          <div class="winner-card rank-${w.rank}" onclick="toggleWinnerUnmask(${w.rank})" title="Klik atau tekan tombol ${w.rank} untuk buka nama asli">
+            <div class="winner-left">
+              <span class="winner-rank">#${w.rank}</span>
+              <span class="winner-name">${escapeHtml(displayName)}</span>
+            </div>
+            <div class="winner-right">
+              <span class="winner-meta">#${String(w.cardNum).padStart(3, '0')} · +${(w.elapsedSinceRevealMs / 1000).toFixed(2)}s</span>
+              <span class="unmask-tag ${isUnmasked ? 'revealed' : ''}">
+                ${isUnmasked ? `${ICONS.checkMini}<span>TERBUKA</span>` : `${ICONS.eye}<span>BUKA [${w.rank}]</span>`}
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleWinnerUnmask(rank) {
+      if (!latestWinners.some((w) => w.rank === rank)) return;
+      if (!unmaskedRanks.has(rank)) {
+        unmaskedRanks.add(rank);
+        playSfx('unmask');
+      } else {
+        unmaskedRanks.delete(rank);
+      }
+      renderWinners(latestWinners);
+    }
+
+    function unmaskAllWinners() {
+      let changed = false;
+      for (const w of latestWinners) {
+        if (!unmaskedRanks.has(w.rank)) {
+          unmaskedRanks.add(w.rank);
+          changed = true;
+        }
+      }
+      if (changed) playSfx('unmask');
+      renderWinners(latestWinners);
+    }
+
+    function renderLobbyJoinFeed(recentJoins) {
+      const el = document.getElementById('lobbyJoinFeed');
+      if (!recentJoins || recentJoins.length === 0) {
+        el.innerHTML = '<span class="join-chip">Menunggu peserta scan QR...</span>';
+        return;
+      }
+      el.innerHTML = recentJoins.map((j) =>
+        `<span class="join-chip"><b>#${String(j.cardNum).padStart(3, '0')}</b>${escapeHtml(j.maskedName)}</span>`
+      ).join('');
+    }
+
+    function renderTelemetry(telemetry, gridSize, phase) {
+      const t = telemetry || {
+        totalPlayers: 0,
+        sleepingBingoCount: 0,
+        sleepingBingoPct: 0,
+        oneAwayCount: 0,
+        oneAwayPct: 0,
+        twoAwayCount: 0,
+        twoAwayPct: 0,
+        leaderboard: [],
+      };
+
+      document.getElementById('kpiBingo').textContent = `${t.sleepingBingoCount} (${t.sleepingBingoPct}%)`;
+      document.getElementById('kpiOneAway').textContent = `${t.oneAwayCount} (${t.oneAwayPct}%)`;
+      document.getElementById('kpiTwoAway').textContent = `${t.twoAwayCount} (${t.twoAwayPct}%)`;
+
+      const alertEl = document.getElementById('sleepingBingoAlert');
+      const showAlert = phase === 'PLAYING' && t.sleepingBingoCount > 0;
+      alertEl.classList.toggle('show', showAlert);
+      if (showAlert) {
+        document.getElementById('sleepingBingoText').textContent =
+          `PERINGATAN: ${t.sleepingBingoCount} KARTU SUDAH 1 GARIS PENUH — BELUM CLAIM!`;
+        document.getElementById('sleepingBingoPct').textContent = `${t.sleepingBingoPct}%`;
+      }
+
+      const lbEl = document.getElementById('leaderboardList');
+      const lbRows = t.leaderboard || [];
+      if (lbRows.length === 0) {
+        lbEl.innerHTML = '<div class="lb-empty">Menunggu pemain atau reveal pertama untuk hitung progres kartu...</div>';
+        return;
+      }
+
+      lbEl.innerHTML = lbRows.map((row, idx) => {
+        const isReady = row.needed === 0;
+        const segs = Array.from({ length: gridSize }, (_, i) => {
+          const filled = i < row.maxLineHits;
+          return `<span class="lb-seg${filled ? (isReady ? ' bingo' : ' hit') : ''}"></span>`;
+        }).join('');
+        const statusLabel = isReady
+          ? 'BINGO!'
+          : `${row.maxLineHits}/${gridSize} · ${row.linesAtMax} JALUR`;
+        return `
+          <div class="lb-row${isReady ? ' bingo-ready' : ''}">
+            <span class="lb-rank">#${idx + 1}</span>
+            <span class="lb-name">${escapeHtml(row.maskedName)}<small>#${String(row.cardNum).padStart(3, '0')}</small></span>
+            <div class="lb-segs" aria-label="${row.maxLineHits} dari ${gridSize}">${segs}</div>
+            <span class="lb-score">${statusLabel}</span>
+          </div>
+        `;
+      }).join('');
     }
 
     function renderState(st) {
+      if (st.gameId !== lastGameId) {
+        lastGameId = st.gameId;
+        unmaskedRanks.clear();
+        stopCountdown();
+        document.getElementById('timerCountdown').textContent = '6s';
+      }
+
       currentGridSize = st.gridSize || 5;
       currentPhase = st.phase;
       const gridLabel = st.gridLabel || (currentGridSize === 7 ? '7×7 P·E·L·I·N·D·O' : '5×5 P·R·I·O·K');
@@ -724,12 +1316,18 @@
       if (st.phase === 'LOBBY') {
         lobby.classList.remove('hidden');
         stage.classList.add('hidden');
+        stopCountdown();
       } else {
         lobby.classList.add('hidden');
         stage.classList.remove('hidden');
       }
 
+      renderLobbyJoinFeed(st.recentJoins);
+
       const winnerAdded = st.winners.length > lastWinnerCount;
+      const telemetry = st.telemetry || {};
+      const sleepingCount = telemetry.sleepingBingoCount || 0;
+      const sleepingTriggered = st.phase === 'PLAYING' && sleepingCount > 0 && sleepingCount > lastSleepingCount;
       let clueSound = null;
 
       if (st.currentClue) {
@@ -744,50 +1342,54 @@
             startTimerBar();
             clueSound = 'clue';
           } else {
+            stopCountdown();
+            document.getElementById('timerCountdown').textContent = 'OPEN';
             clueSound = 'reveal';
           }
         }
         lastClueKey = clueKey;
 
         const rbox = document.getElementById('revealBox');
+        const impactEl = document.getElementById('revealImpact');
+        stage.classList.toggle('has-reveal', Boolean(st.currentClue.revealed));
         if (st.currentClue.revealed) {
           rbox.classList.add('show');
-          document.getElementById('revealTitle').textContent = `✅ ${st.currentClue.shortLabel}`;
+          document.getElementById('revealTitle').innerHTML = `${ICONS.checkSquare}<span>${escapeHtml(st.currentClue.shortLabel)}</span>`;
           document.getElementById('revealInsight').textContent = `Bab: ${st.currentClue.bab}`;
+
+          if (telemetry.totalPlayers > 0) {
+            impactEl.classList.remove('hidden');
+            impactEl.innerHTML = `${ICONS.target}<span>${telemetry.currentTileHoldersCount} / ${telemetry.totalPlayers} KARTU (${telemetry.currentTileHoldersPct}%) PUNYA KOTAK INI</span><span>·</span><span>${telemetry.oneAwayCount} KARTU TINGGAL 1 KOTAK LAGI</span>`;
+          } else {
+            impactEl.classList.add('hidden');
+          }
         } else {
           rbox.classList.remove('show');
+          impactEl.classList.add('hidden');
         }
       } else {
         lastClueKey = '';
+        stage.classList.remove('has-reveal');
         document.getElementById('revealBox').classList.remove('show');
       }
 
       if (hasInitialized) {
         if (winnerAdded) playSfx('win');
+        else if (sleepingTriggered) playSfx('siren');
         else if (clueSound) playSfx(clueSound);
       }
       lastWinnerCount = st.winners.length;
+      lastSleepingCount = sleepingCount;
       hasInitialized = true;
 
-      const wList = document.getElementById('winnersList');
-      if (st.winners.length === 0) {
-        wList.innerHTML = '<div class="winners-empty">Belum ada pemenang. Menunggu 1 garis penuh...</div>';
-      } else {
-        wList.innerHTML = st.winners.map((w) => `
-          <div class="winner-card rank-${w.rank}">
-            <div style="display:flex;align-items:center;">
-              <span class="winner-rank">#${w.rank}</span>
-              <span class="winner-name">${escapeHtml(w.name)}</span>
-            </div>
-            <span class="winner-meta">Kartu #${String(w.cardNum).padStart(3,'0')} · +${(w.elapsedSinceRevealMs/1000).toFixed(2)}s</span>
-          </div>
-        `).join('');
-      }
+      renderWinners(st.winners);
+      renderTelemetry(telemetry, currentGridSize, st.phase);
 
       const hGrid = document.getElementById('historyGrid');
       hGrid.innerHTML = st.revealedHistory.map((h) => {
         const chapColor = CHAPTER_COLORS[h.bab] || '#38BDF8';
-        return `<span class="hist-pill"><b style="background:${chapColor};">${escapeHtml(h.bab)}</b><span>${escapeHtml(h.shortLabel)}</span></span>`;
+        const chapCode = CHAPTER_SHORT[h.bab] || h.bab.slice(0, 2).toUpperCase();
+        return `<span class="hist-pill" title="${escapeHtml(h.bab)}"><b style="background:${chapColor};">${escapeHtml(chapCode)}</b><span>${escapeHtml(h.shortLabel)}</span></span>`;
       }).join('');
     }
 
@@ -813,6 +1415,9 @@
       } else if (e.key.toLowerCase() === 'm' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         toggleSfx();
+      } else if ((e.key === '1' || e.key === '2' || e.key === '3') && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        toggleWinnerUnmask(Number(e.key));
       }
     });
 
