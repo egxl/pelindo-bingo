@@ -188,7 +188,32 @@ async function run() {
       body: '{bad-json',
     });
     assert.equal(badUrlRes.status, 400);
-    console.log('[PASS] Live switch 7x7 -> 5x5 & malformed JSON rejection verified');
+
+    const setWinnersRes = await fetch(`${base}/api/host/set-winners`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ maxWinners: 5 }),
+    }).then((r) => r.json());
+    assert.equal(setWinnersRes.ok, true);
+    assert.equal(setWinnersRes.state.maxWinners, 5);
+
+    const badWinnersRes = await fetch(`${base}/api/host/set-winners`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ maxWinners: 11 }),
+    });
+    assert.equal(badWinnersRes.status, 400);
+
+    const joinSample = await fetch(`${base}/api/join`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: 'Budi Priok' }),
+    }).then((r) => r.json());
+    assert.equal(joinSample.ok, true);
+    const stAfterJoin = await fetch(`${base}/api/state?v=0`).then((r) => r.json());
+    assert.equal(stAfterJoin.recentJoins[0].name, 'Budi Priok');
+    assert.equal(stAfterJoin.recentJoins[0].maskedName, 'B*** Pr***');
+    console.log('[PASS] Live switch 7x7 -> 5x5, set-winners (1-10), & uncensored lobby join feed verified');
   } finally {
     server.close();
   }
