@@ -709,6 +709,16 @@
       padding-top: 8px;
       min-height: 110px;
     }
+    .history-wrap.is-collapsed {
+      flex: 0 0 auto;
+      min-height: 0;
+      overflow: visible;
+    }
+    .history-wrap.is-collapsed .history-label { margin-bottom: 0; }
+    .history-wrap.is-collapsed .history-legend,
+    .history-wrap.is-collapsed .history-grid {
+      display: none;
+    }
     .history-label {
       font-family: var(--font-mono);
       font-size: 12px;
@@ -722,6 +732,26 @@
       justify-content: space-between;
       gap: 8px;
       flex-wrap: wrap;
+    }
+    .history-head-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
+    .history-toggle-btn {
+      padding: 2px 7px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 900;
+      background: var(--bg);
+      border: 2px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
+      line-height: 1.3;
+    }
+    .history-toggle-btn[aria-expanded="false"] {
+      background: var(--yellow);
     }
     .history-legend {
       display: inline-flex;
@@ -1035,15 +1065,18 @@
         </div>
       </div>
 
-      <div class="history-wrap">
+      <div class="history-wrap" id="historyWrap">
         <div class="history-label">
-          <span>KOTAK SUDAH DI-REVEAL:</span>
-          <span class="history-legend">
-            <span class="leg-dot" style="background: var(--cyan);">CP Profile</span>
-            <span class="leg-dot" style="background: var(--green);">BP Process</span>
-            <span class="leg-dot" style="background: var(--violet);">VE Visited</span>
-            <span class="leg-dot" style="background: var(--coral);">BC Challenge</span>
-          </span>
+          <span id="historyTitleText">KOTAK SUDAH DI-REVEAL (0)</span>
+          <div class="history-head-right">
+            <span class="history-legend">
+              <span class="leg-dot" style="background: var(--cyan);">CP Profile</span>
+              <span class="leg-dot" style="background: var(--green);">BP Process</span>
+              <span class="leg-dot" style="background: var(--violet);">VE Visited</span>
+              <span class="leg-dot" style="background: var(--coral);">BC Challenge</span>
+            </span>
+            <button id="historyToggleBtn" type="button" class="history-toggle-btn" onclick="toggleHistory()" aria-expanded="true" aria-controls="historyGrid" title="Sembunyikan/tampilkan kotak yang sudah di-reveal [H]">SEMBUNYIKAN [H]</button>
+          </div>
         </div>
         <div class="history-grid" id="historyGrid"></div>
       </div>
@@ -1546,6 +1579,7 @@
       renderWinners(st.winners);
       renderTelemetry(telemetry, currentGridSize, st.phase);
 
+      document.getElementById('historyTitleText').textContent = `KOTAK SUDAH DI-REVEAL (${st.revealedHistory.length})`;
       const hGrid = document.getElementById('historyGrid');
       hGrid.innerHTML = st.revealedHistory.map((h) => {
         const chapColor = CHAPTER_COLORS[h.bab] || '#38BDF8';
@@ -1557,6 +1591,28 @@
     function escapeHtml(str) {
       return String(str).replace(/[&<>"']/g, (m) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
     }
+
+    let showHistory = true;
+    try {
+      showHistory = localStorage.getItem('pelindo_show_history') !== 'false';
+    } catch {}
+
+    function applyHistoryVisibility() {
+      const wrap = document.getElementById('historyWrap');
+      const btn = document.getElementById('historyToggleBtn');
+      if (!wrap || !btn) return;
+      wrap.classList.toggle('is-collapsed', !showHistory);
+      btn.setAttribute('aria-expanded', String(showHistory));
+      btn.textContent = showHistory ? 'SEMBUNYIKAN [H]' : 'TAMPILKAN [H]';
+    }
+
+    function toggleHistory() {
+      showHistory = !showHistory;
+      try { localStorage.setItem('pelindo_show_history', String(showHistory)); } catch {}
+      applyHistoryVisibility();
+    }
+
+    applyHistoryVisibility();
 
     function toggleFullscreen() {
       if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
@@ -1579,6 +1635,9 @@
       } else if (e.key.toLowerCase() === 'm' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         toggleSfx();
+      } else if (e.key.toLowerCase() === 'h' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        toggleHistory();
       } else if (/^[0-9]$/.test(e.key) && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         const rank = e.key === '0' ? 10 : Number(e.key);
