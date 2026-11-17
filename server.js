@@ -10,7 +10,9 @@ import { CHAPTERS, GRID_CONFIGS, TILES } from './data/tiles.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 3000);
 const HOST = '127.0.0.1';
-const MAX_WINNERS = 3;
+const DEFAULT_MAX_WINNERS = 3;
+const MIN_WINNERS = 1;
+const MAX_WINNERS_LIMIT = 10;
 const CHAPTER_COLOR_MAP = Object.fromEntries(CHAPTERS.map((c) => [c.name, c.color]));
 
 function resolveInitialGridSize() {
@@ -141,8 +143,9 @@ const state = {
   revealedIds: new Set(),
   revealedHistory: [], // [{ id, bab, shortLabel }]
   players: new Map(), // playerId -> { playerId, cardNum, seed, name, grid, wonRank }
-  recentJoins: [], // [{ cardNum, maskedName, joinedAtMs }]
+  recentJoins: [], // [{ cardNum, name, maskedName, joinedAtMs }]
   nextCardNum: 1,
+  maxWinners: DEFAULT_MAX_WINNERS,
   winners: [], // [{ rank, playerId, cardNum, name, maskedName, claimAtMs, elapsedSinceRevealMs, lineIndices }]
   telemetry: createEmptyTelemetry(initialGridSize),
   hostClients: new Set(),
@@ -287,6 +290,7 @@ function getPublicState() {
     gridLabel: gridConfig.label,
     v: state.version,
     phase: state.phase,
+    maxWinners: state.maxWinners,
     playerCount: state.players.size,
     callIndex: state.callCursor + 1,
     totalCalls: state.callOrder.length,
@@ -453,6 +457,7 @@ export async function createGameServer() {
         state.players.set(playerId, record);
         state.recentJoins.unshift({
           cardNum,
+          name,
           maskedName: maskName(name),
           joinedAtMs: Date.now(),
         });
@@ -501,11 +506,11 @@ export async function createGameServer() {
             winners: state.winners,
           });
         }
-        if (state.winners.length >= MAX_WINNERS) {
+        if (state.winners.length >= state.maxWinners) {
           return sendJson(res, 200, {
             ok: false,
             podiumFull: true,
-            reason: 'Podium Juara 1–3 sudah penuh! Terima kasih sudah bermain.',
+            reason: `Podium Juara 1–${state.maxWinners} sudah penuh! Terima kasih sudah bermain.`,
             winners: state.winners,
           });
         }
@@ -552,7 +557,7 @@ export async function createGameServer() {
           lineIndices: matchedLine,
         };
         state.winners.push(winEntry);
-        if (state.winners.length >= MAX_WINNERS) {
+        if (state.winners.length >= state.maxWinners) {
           state.phase = 'ENDED';
         }
         recomputeTelemetry();
@@ -655,6 +660,26 @@ export async function createGameServer() {
             return sendJson(res, 400, { ok: false, reason: 'gridSize must be 5 or 7' });
           }
           resetGameState(gridSize);
+          bumpState();
+          return sendJson(res, 200, { ok: true, state: getPublicState() });
+        } catch (err) {
+          return sendJson(res, 400, { ok: false, reason: err.message });
+        }
+      }
+
+      if (req.method === 'POST' && pathname === '/api/host/set-winners') {
+        try {
+          const body = await readJsonBody(req);
+          const nextMax = Number(body.maxWinners);
+          if (!Number.isInteger(nextMax) || nextMax < MIN_WINNERS || nextMax > MAX_WINNERS_LIMIT) {
+            return sendJson(res, 400, { ok: false, reason: `maxWinners must be an integer between ${MIN_WINNERS} and ${MAX_WINNERS_LIMIT}` });
+          }
+          state.maxWinners = nextMax;
+          if (state.phase === 'PLAYING' && state.winners.length >= state.maxWinners) {
+            state.phase = 'ENDED';
+          } else if (state.phase === 'ENDED' && state.winners.length < state.maxWinners) {
+            state.phase = 'PLAYING';
+          }
           bumpState();
           return sendJson(res, 200, { ok: true, state: getPublicState() });
         } catch (err) {
