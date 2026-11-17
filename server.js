@@ -66,7 +66,7 @@ function generateCardGrid(cardSeed, gridSize) {
 
   for (let idx = 0; idx < totalCells; idx++) {
     if (idx === freeIndex) {
-      grid[idx] = { id: -1, bab: 'FREE', shortLabel: 'FREE ★ PELINDO', isFree: true };
+      grid[idx] = { id: -1, bab: 'FREE', shortLabel: 'FREE · PELINDO', isFree: true };
     } else {
       const tile = pool[cursor++];
       grid[idx] = { id: tile.id, bab: tile.bab, shortLabel: tile.shortLabel, isFree: false };
@@ -94,10 +94,41 @@ function buildCallOrder() {
   return order;
 }
 
+function maskName(rawName) {
+  const clean = String(rawName || '').trim();
+  if (!clean) return 'K***';
+  return clean
+    .split(/\s+/)
+    .map((part) => {
+      const chars = Array.from(part);
+      if (chars.length <= 2) return `${chars[0]}*`;
+      if (chars.length <= 4) return `${chars[0]}${'*'.repeat(chars.length - 1)}`;
+      return `${chars[0]}${chars[1]}${'*'.repeat(chars.length - 2)}`;
+    })
+    .join(' ');
+}
+
+function createEmptyTelemetry(gridSize) {
+  return {
+    totalPlayers: 0,
+    activePlayers: 0,
+    sleepingBingoCount: 0,
+    sleepingBingoPct: 0,
+    oneAwayCount: 0,
+    oneAwayPct: 0,
+    twoAwayCount: 0,
+    twoAwayPct: 0,
+    currentTileHoldersCount: 0,
+    currentTileHoldersPct: 0,
+    leaderboard: [],
+  };
+}
+
 // Game state
+const initialGridSize = resolveInitialGridSize();
 const state = {
   gameId: crypto.randomBytes(4).toString('hex'),
-  gridSize: resolveInitialGridSize(),
+  gridSize: initialGridSize,
   version: 1,
   phase: 'LOBBY', // LOBBY | PLAYING | ENDED
   joinUrl: `http://127.0.0.1:${PORT}`,
@@ -110,10 +141,98 @@ const state = {
   revealedIds: new Set(),
   revealedHistory: [], // [{ id, bab, shortLabel }]
   players: new Map(), // playerId -> { playerId, cardNum, seed, name, grid, wonRank }
+  recentJoins: [], // [{ cardNum, maskedName, joinedAtMs }]
   nextCardNum: 1,
-  winners: [], // [{ rank, playerId, cardNum, name, claimAtMs, elapsedSinceRevealMs, lineIndices }]
+  winners: [], // [{ rank, playerId, cardNum, name, maskedName, claimAtMs, elapsedSinceRevealMs, lineIndices }]
+  telemetry: createEmptyTelemetry(initialGridSize),
   hostClients: new Set(),
 };
+
+function recomputeTelemetry() {
+  const totalPlayers = state.players.size;
+  if (totalPlayers === 0) {
+    state.telemetry = createEmptyTelemetry(state.gridSize);
+    return;
+  }
+
+  const winLines = WIN_LINES_BY_SIZE[state.gridSize];
+  const currentId = state.callCursor >= 0 ? state.callOrder[state.callCursor] : null;
+  const checkCurrentTile = state.currentTileRevealed && currentId !== null;
+  const pct = (count, denom) => (denom > 0 ? Number(((count / denom) * 100).toFixed(1)) : 0);
+
+  let activePlayers = 0;
+  let sleepingBingoCount = 0;
+  let oneAwayCount = 0;
+  let twoAwayCount = 0;
+  let currentTileHoldersCount = 0;
+  const contenders = [];
+
+  for (const player of state.players.values()) {
+    if (checkCurrentTile && player.grid.some((c) => !c.isFree && c.id === currentId)) {
+      currentTileHoldersCount++;
+    }
+    if (player.wonRank) continue;
+
+    activePlayers++;
+    let totalHits = 0;
+    for (const cell of player.grid) {
+      if (!cell.isFree && state.revealedIds.has(cell.id)) totalHits++;
+    }
+
+    let maxLineHits = 0;
+    let linesAtMax = 0;
+    for (const line of winLines) {
+      let hits = 0;
+      for (const cellIdx of line) {
+        const cell = player.grid[cellIdx];
+        if (cell.isFree || state.revealedIds.has(cell.id)) hits++;
+      }
+      if (hits > maxLineHits) {
+        maxLineHits = hits;
+        linesAtMax = 1;
+      } else if (hits === maxLineHits) {
+        linesAtMax++;
+      }
+    }
+
+    if (maxLineHits === state.gridSize) sleepingBingoCount++;
+    else if (maxLineHits === state.gridSize - 1) oneAwayCount++;
+    else if (maxLineHits === state.gridSize - 2) twoAwayCount++;
+
+    contenders.push({
+      cardNum: player.cardNum,
+      maskedName: maskName(player.name),
+      maxLineHits,
+      gridSize: state.gridSize,
+      linesAtMax,
+      totalHits,
+      needed: state.gridSize - maxLineHits,
+    });
+  }
+
+  contenders.sort(
+    (a, b) =>
+      b.maxLineHits - a.maxLineHits ||
+      b.linesAtMax - a.linesAtMax ||
+      b.totalHits - a.totalHits ||
+      a.cardNum - b.cardNum
+  );
+
+  const denom = activePlayers > 0 ? activePlayers : totalPlayers;
+  state.telemetry = {
+    totalPlayers,
+    activePlayers,
+    sleepingBingoCount,
+    sleepingBingoPct: pct(sleepingBingoCount, denom),
+    oneAwayCount,
+    oneAwayPct: pct(oneAwayCount, denom),
+    twoAwayCount,
+    twoAwayPct: pct(twoAwayCount, denom),
+    currentTileHoldersCount,
+    currentTileHoldersPct: pct(currentTileHoldersCount, totalPlayers),
+    leaderboard: contenders.slice(0, 5),
+  };
+}
 
 function resetGameState(nextGridSize = state.gridSize) {
   state.gameId = crypto.randomBytes(4).toString('hex');
@@ -127,8 +246,10 @@ function resetGameState(nextGridSize = state.gridSize) {
   state.revealedIds.clear();
   state.revealedHistory = [];
   state.players.clear();
+  state.recentJoins = [];
   state.nextCardNum = 1;
   state.winners = [];
+  state.telemetry = createEmptyTelemetry(nextGridSize);
 }
 
 async function refreshQrSvg() {
@@ -182,6 +303,8 @@ function getPublicState() {
       : null,
     revealedIds: Array.from(state.revealedIds),
     revealedHistory: state.revealedHistory,
+    recentJoins: state.recentJoins,
+    telemetry: state.telemetry || createEmptyTelemetry(state.gridSize),
     winners: state.winners,
     joinUrl: state.joinUrl,
   };
@@ -328,6 +451,18 @@ export async function createGameServer() {
         const grid = generateCardGrid(seed, state.gridSize);
         const record = { playerId, cardNum, seed, name, grid, wonRank: null };
         state.players.set(playerId, record);
+        state.recentJoins.unshift({
+          cardNum,
+          maskedName: maskName(name),
+          joinedAtMs: Date.now(),
+        });
+        if (state.recentJoins.length > 6) state.recentJoins.length = 6;
+        if (state.phase === 'LOBBY') {
+          state.telemetry.totalPlayers = state.players.size;
+          state.telemetry.activePlayers = state.players.size;
+        } else {
+          recomputeTelemetry();
+        }
         bumpState();
 
         return sendJson(res, 200, {
@@ -411,6 +546,7 @@ export async function createGameServer() {
           playerId: player.playerId,
           cardNum: player.cardNum,
           name: player.name,
+          maskedName: maskName(player.name),
           claimAtMs: nowMs,
           elapsedSinceRevealMs: state.lastRevealAt ? Math.max(0, nowMs - state.lastRevealAt) : 0,
           lineIndices: matchedLine,
@@ -419,6 +555,7 @@ export async function createGameServer() {
         if (state.winners.length >= MAX_WINNERS) {
           state.phase = 'ENDED';
         }
+        recomputeTelemetry();
         bumpState();
 
         return sendJson(res, 200, {
@@ -471,6 +608,7 @@ export async function createGameServer() {
           state.currentTileRevealed = false;
           state.currentClueStartedAt = Date.now();
         }
+        recomputeTelemetry();
         bumpState();
         return sendJson(res, 200, { ok: true, state: getPublicState() });
       }
@@ -491,6 +629,7 @@ export async function createGameServer() {
               shortLabel: t.shortLabel,
             });
           }
+          recomputeTelemetry();
           bumpState();
         }
         return sendJson(res, 200, { ok: true, state: getPublicState() });
@@ -502,6 +641,7 @@ export async function createGameServer() {
           state.callCursor++;
           state.currentTileRevealed = false;
           state.currentClueStartedAt = Date.now();
+          recomputeTelemetry();
           bumpState();
         }
         return sendJson(res, 200, { ok: true, state: getPublicState() });
