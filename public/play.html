@@ -6,171 +6,437 @@
   <title>PELINDO! · Kartu PRIOK</title>
   <style>
     :root {
-      --bg: #030a16;
-      --surface: #0b1f3c;
-      --tile: #102a4e;
-      --tile-border: rgba(56, 189, 248, 0.25);
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --cyan: #38bdf8;
-      --green: #10b981;
-      --amber: #f59e0b;
-      --red: #ef4444;
+      --bg: #FFFDF5;
+      --surface: #FFFFFF;
+      --ink: #0A0A0A;
+      --muted: #525252;
+      --yellow: #FFD93D;
+      --cyan: #38BDF8;
+      --green: #2EE59D;
+      --violet: #C4B5FD;
+      --coral: #FF6B6B;
+      --amber: #FF9F1C;
+      --font-display: "Arial Black", "Segoe UI Black", Impact, system-ui, -apple-system, sans-serif;
+      --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
-      background: radial-gradient(circle at 50% 0%, #0d284d 0%, var(--bg) 75%);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(var(--ink) 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: var(--ink);
+      font-family: var(--font-body);
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10px 10px 18px;
+      padding: 10px 8px 18px;
       user-select: none;
     }
-    .app { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 10px; }
-    .topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(11, 31, 60, 0.85); border: 1px solid var(--tile-border);
-      border-radius: 12px; padding: 8px 12px;
-    }
-    .brand { font-weight: 900; font-size: 16px; letter-spacing: 0.08em; color: var(--cyan); }
-    .brand span { color: var(--green); }
-    .meta { font-size: 12px; color: var(--muted); text-align: right; }
-    .meta strong { color: var(--text); display: block; font-size: 13px; }
+    .app { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 9px; }
 
+    /* Top Ticket Stub */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: var(--yellow);
+      border: 3px solid var(--ink);
+      box-shadow: 4px 4px 0 var(--ink);
+      border-radius: 0;
+      padding: 8px 12px;
+    }
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      line-height: 1;
+    }
+    .brand span {
+      display: inline-block;
+      background: var(--coral);
+      border: 2px solid var(--ink);
+      padding: 0 4px;
+      margin-left: 2px;
+    }
+    .meta { font-size: 12px; color: var(--ink); text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+    .meta strong {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--ink);
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .meta span {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 900;
+      background: var(--surface);
+      border: 2px solid var(--ink);
+      padding: 1px 6px;
+    }
+
+    /* Live Clue Status Banner */
     .status-bar {
-      background: rgba(11, 31, 60, 0.75); border: 1px solid var(--tile-border);
-      border-radius: 10px; padding: 8px 12px; font-size: 13px; line-height: 1.35;
-      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      background: var(--surface);
+      border: 3px solid var(--ink);
+      box-shadow: 4px 4px 0 var(--ink);
+      border-radius: 0;
+      padding: 8px 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      line-height: 1.3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--ink);
     }
     .pill {
-      font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 999px;
-      background: rgba(56, 189, 248, 0.15); color: var(--cyan); white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 900;
+      padding: 4px 8px;
+      border-radius: 0;
+      border: 2px solid var(--ink);
+      background: var(--violet);
+      color: var(--ink);
+      white-space: nowrap;
+      text-transform: uppercase;
     }
-    .pill.live { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .pill.live { background: var(--green); }
 
+    /* Column Headers (P-R-I-O-K / P-E-L-I-N-D-O) */
     .col-headers {
-      display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
     }
-    .col-headers.g7 { grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .col-headers.g7 {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 4px;
+    }
     .col-h {
-      text-align: center; font-weight: 900; font-size: 18px; padding: 6px 0;
-      border-radius: 8px; background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.35); color: #fff;
+      text-align: center;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 18px;
+      padding: 5px 0;
+      border-radius: 0;
+      border: 2.5px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
+      color: var(--ink);
+      background: var(--yellow);
     }
-    .col-headers.g7 .col-h { font-size: 14px; padding: 4px 0; border-radius: 6px; }
+    .col-h:nth-child(even) { background: var(--cyan); }
+    .col-headers.g7 .col-h {
+      font-size: 14px;
+      padding: 4px 0;
+      border-width: 2px;
+    }
 
+    /* Tap-Readability Inspector */
     .tap-preview {
-      background: rgba(11, 31, 60, 0.75); border: 1px solid var(--tile-border);
-      border-radius: 8px; padding: 6px 10px; font-size: 12px; color: var(--muted);
-      display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      min-height: 30px;
+      background: var(--surface);
+      border: 3px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      border-radius: 0;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      min-height: 34px;
     }
-    .tap-preview strong { color: var(--cyan); font-size: 13px; }
-
-    .grid {
-      display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+    .preview-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
     }
-    .grid.g7 { grid-template-columns: repeat(7, 1fr); gap: 3px; }
-    .tile {
-      aspect-ratio: 1 / 1;
-      background: var(--tile);
-      border: 1.5px solid var(--tile-border);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center; text-align: center;
-      padding: 4px;
-      font-size: 11px; font-weight: 700; line-height: 1.15;
-      color: var(--text);
-      cursor: pointer;
-      transition: transform 0.1s ease, background 0.15s ease, border-color 0.15s ease;
-      word-break: break-word;
-    }
-    .grid.g7 .tile {
-      padding: 2px;
-      min-height: 46px;
-      font-size: clamp(8px, 2.15vw, 10.5px);
-      overflow-wrap: anywhere;
-      border-radius: 7px;
-    }
-    .tile:active { transform: scale(0.95); }
-    .tile.marked {
-      background: linear-gradient(145deg, #0ea5e9, #0284c7);
-      border-color: #7dd3fc;
-      color: #fff;
-      box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
-    }
-    .tile.free {
-      background: linear-gradient(145deg, #10b981, #059669);
-      border-color: #6ee7b7;
-      color: #fff;
+    .preview-bab {
+      font-family: var(--font-mono);
       font-size: 10px;
       font-weight: 900;
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+      padding: 1px 5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .tap-preview strong {
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+    .preview-state {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 900;
+      color: var(--ink);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Bingo Tile Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .grid.g7 {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 4px;
+    }
+    .tile {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      background: var(--surface);
+      border: 3px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 9px 4px 4px;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.12;
+      color: var(--ink);
+      cursor: pointer;
+      transition: transform 0.06s, box-shadow 0.06s, background-color 0.06s;
+      word-break: normal;
+      overflow-wrap: break-word;
+      overflow: hidden;
+    }
+    .tile:not(.free)::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: var(--bab-color, var(--ink));
+      border-bottom: 1.5px solid var(--ink);
+    }
+    .grid.g7 .tile {
+      border-width: 2px;
+      box-shadow: 2px 2px 0 var(--ink);
+      padding: 7px 2px 2px;
+      min-height: 44px;
+      font-size: clamp(7.2px, 1.95vw, 9.8px);
+      line-height: 1.08;
+      overflow-wrap: break-word;
+    }
+    .grid.g7 .tile:not(.free)::before {
+      height: 4px;
+      border-bottom-width: 1px;
+    }
+    .tile:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0 0 0 var(--ink);
+    }
+    .tile.marked {
+      background: var(--yellow);
+      color: var(--ink);
+      transform: translate(2px, 2px);
+      box-shadow: 0 0 0 var(--ink);
+    }
+    .tile.marked::after {
+      content: '✓';
+      position: absolute;
+      top: 0;
+      right: 0;
+      font-size: 9px;
+      font-weight: 900;
+      line-height: 1;
+      padding: 1px 3px;
+      background: var(--ink);
+      color: var(--yellow);
+    }
+    .grid.g7 .tile.marked::after {
+      font-size: 8px;
+      padding: 1px 2px;
+    }
+    .tile.free {
+      background: var(--green);
+      color: var(--ink);
+      font-size: 10px;
+      font-weight: 900;
+      padding: 4px;
       cursor: default;
     }
-    .grid.g7 .tile.free { font-size: clamp(7.5px, 1.9vw, 9.5px); }
+    .grid.g7 .tile.free { font-size: clamp(7.5px, 1.9vw, 9.5px); padding: 2px; }
     .tile.win-line {
-      background: linear-gradient(145deg, #f59e0b, #d97706);
-      border-color: #fde68a;
-      box-shadow: 0 0 18px rgba(245, 158, 11, 0.65);
+      background: var(--amber);
+      color: var(--ink);
+      transform: translate(0, 0);
+      box-shadow: 3px 3px 0 var(--ink);
+      outline: 2.5px solid var(--coral);
+      outline-offset: -4px;
+    }
+    .grid.g7 .tile.win-line {
+      box-shadow: 2px 2px 0 var(--ink);
+      outline-width: 2px;
+      outline-offset: -3px;
+    }
+
+    /* Message & Claim Buzzer */
+    .msg {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 900;
+      min-height: 20px;
+      padding: 8px 10px;
+      border-radius: 0;
+      display: none;
+      color: var(--ink);
+    }
+    .msg.show { display: block; }
+    .msg.err {
+      background: var(--coral);
+      border: 3px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+    .msg.win {
+      background: var(--yellow);
+      border: 3px solid var(--ink);
+      box-shadow: 4px 4px 0 var(--ink);
+      font-size: 14px;
     }
 
     .claim-btn {
-      width: 100%; padding: 14px; border-radius: 14px; border: none;
-      font-size: 17px; font-weight: 900; letter-spacing: 0.05em;
-      background: #1e293b; color: #64748b; cursor: not-allowed;
-      transition: all 0.2s ease;
+      width: 100%;
+      padding: 14px 12px;
+      border-radius: 0;
+      border: 3px solid var(--ink);
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: #E5E4DC;
+      color: var(--muted);
+      cursor: not-allowed;
+      transition: transform 0.06s, box-shadow 0.06s, background-color 0.06s;
     }
     .claim-btn.ready {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: #fff; cursor: pointer;
-      box-shadow: 0 8px 26px rgba(16, 185, 129, 0.45);
-      animation: pulse 1.2s infinite alternate;
+      background: var(--green);
+      color: var(--ink);
+      border: 4px solid var(--ink);
+      box-shadow: 5px 5px 0 var(--ink);
+      cursor: pointer;
+      font-size: 17px;
+      animation: buzzerPulse 0.8s steps(2, end) infinite;
     }
-    @keyframes pulse {
-      from { transform: scale(1); }
-      to { transform: scale(1.02); }
+    .claim-btn.ready:active {
+      transform: translate(4px, 4px);
+      box-shadow: 1px 1px 0 var(--ink);
+      animation: none;
+    }
+    @keyframes buzzerPulse {
+      0% { background-color: var(--green); }
+      50% { background-color: var(--yellow); }
+      100% { background-color: var(--green); }
     }
 
-    .msg {
-      text-align: center; font-size: 13px; font-weight: 700; min-height: 20px;
-      padding: 6px 10px; border-radius: 8px; display: none;
-    }
-    .msg.show { display: block; }
-    .msg.err { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.35); }
-    .msg.win { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.5); font-size: 15px; }
-
-    /* Join modal overlay */
+    /* Join Modal Overlay */
     .overlay {
-      position: fixed; inset: 0; background: rgba(3, 10, 22, 0.94);
-      display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 50;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 10, 0.82);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 50;
     }
     .overlay.hidden { display: none; }
     .join-card {
-      width: 100%; max-width: 360px; background: var(--surface);
-      border: 1px solid var(--tile-border); border-radius: 16px; padding: 22px;
-      display: flex; flex-direction: column; gap: 14px; text-align: center;
+      width: 100%;
+      max-width: 360px;
+      background: var(--surface);
+      border: 4px solid var(--ink);
+      box-shadow: 8px 8px 0 var(--ink);
+      border-radius: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: center;
     }
-    .join-card h1 { font-size: 26px; font-weight: 900; color: var(--cyan); letter-spacing: 0.06em; }
-    .join-card p { font-size: 13px; color: var(--muted); line-height: 1.45; }
+    .join-badge {
+      background: var(--yellow);
+      border: 3px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      padding: 8px 12px;
+      transform: rotate(-1deg);
+    }
+    .join-card h1 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+    .join-card p {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.4;
+    }
     .join-card input {
-      width: 100%; padding: 12px 14px; border-radius: 10px;
-      border: 1.5px solid var(--tile-border); background: #07152a; color: #fff;
-      font-size: 16px; font-weight: 600; outline: none; text-align: center;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 0;
+      border: 3px solid var(--ink);
+      box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.08);
+      background: var(--bg);
+      color: var(--ink);
+      font-size: 16px;
+      font-weight: 800;
+      outline: none;
+      text-align: center;
     }
-    .join-card input:focus { border-color: var(--cyan); }
+    .join-card input:focus { background: #FFFFFF; box-shadow: 4px 4px 0 var(--cyan); }
     .join-card button {
-      width: 100%; padding: 13px; border-radius: 10px; border: none;
-      background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff;
-      font-size: 16px; font-weight: 800; cursor: pointer;
+      width: 100%;
+      padding: 13px;
+      border-radius: 0;
+      border: 3px solid var(--ink);
+      box-shadow: 4px 4px 0 var(--ink);
+      background: var(--green);
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 900;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.06s, box-shadow 0.06s;
+    }
+    .join-card button:active {
+      transform: translate(3px, 3px);
+      box-shadow: 1px 1px 0 var(--ink);
     }
   </style>
 </head>
 <body>
   <div class="overlay" id="joinOverlay">
     <div class="join-card">
-      <h1>PELINDO!</h1>
+      <div class="join-badge"><h1>PELINDO!</h1></div>
       <p>Edisi Tanjung Priok · Kartu Bingo<br/>Masukkan nama panggilan untuk podium hadiah!</p>
       <input id="nameInput" type="text" maxlength="28" placeholder="Nama / Inisial Anda..." autocomplete="off" />
       <button id="joinBtn">MASUK &amp; AMBIL KARTU</button>
@@ -209,6 +475,13 @@
 
   <script>
     const STORAGE_KEY = 'pelindo_priok_card_v1';
+    const CHAPTER_COLORS = {
+      'Company Profile': '#38BDF8',
+      'Business Process': '#2EE59D',
+      'Visited Experience': '#C4B5FD',
+      'Business Challenge': '#FF6B6B',
+    };
+
     let session = null;
     let marked = new Set([12]);
     let stateVersion = 0;
@@ -273,7 +546,14 @@
         el.innerHTML = '<span>Ketuk kotak untuk menandai &amp; melihat teks penuh</span>';
         return;
       }
-      el.innerHTML = `<strong>${escapeHtml(cell.shortLabel)}</strong><span>${escapeHtml(cell.bab || '')} · ${isMarked ? 'Ditandai' : 'Batal'}</span>`;
+      const babColor = CHAPTER_COLORS[cell.bab] || '#FFD93D';
+      el.innerHTML = `
+        <span class="preview-left">
+          <span class="preview-bab" style="background:${babColor};">${escapeHtml(cell.bab || '')}</span>
+          <strong>${escapeHtml(cell.shortLabel)}</strong>
+        </span>
+        <span class="preview-state">${isMarked ? 'DITANDAI ✓' : 'BATAL'}</span>
+      `;
     }
 
     function renderGrid() {
@@ -285,17 +565,30 @@
       session.grid.forEach((cell, idx) => {
         const div = document.createElement('div');
         div.className = 'tile' + (cell.isFree ? ' free' : '') + (marked.has(idx) && !cell.isFree ? ' marked' : '');
+        if (!cell.isFree) {
+          div.style.setProperty('--bab-color', CHAPTER_COLORS[cell.bab] || '#0A0A0A');
+        }
         if (winningLine && winningLine.includes(idx)) div.classList.add('win-line');
         div.textContent = cell.shortLabel;
         if (!cell.isFree && !session.wonRank) {
-          div.onclick = () => {
+          div.setAttribute('role', 'button');
+          div.setAttribute('tabindex', '0');
+          const toggleTile = () => {
             const willMark = !marked.has(idx);
             if (willMark) marked.add(idx);
             else marked.delete(idx);
+            navigator.vibrate?.(25);
             updateTapPreview(cell, willMark);
             saveLocal();
             renderGrid();
             updateClaimButton();
+          };
+          div.onclick = toggleTile;
+          div.onkeydown = (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggleTile();
+            }
           };
         }
         gridEl.appendChild(div);
@@ -358,6 +651,13 @@
       $('joinBtn').disabled = false;
     };
 
+    $('nameInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        $('joinBtn').click();
+      }
+    });
+
     $('claimBtn').onclick = async () => {
       const line = findCompletedLine();
       if (!line || !session) return;
@@ -376,6 +676,7 @@
         if (data.ok) {
           session.wonRank = data.rank;
           winningLine = data.winEntry ? data.winEntry.lineIndices : line;
+          navigator.vibrate?.([40, 30, 80]);
           saveLocal();
           renderGrid();
           showMsg(`SELAMAT! Anda JUARA #${data.rank} PELINDO! Silakan maju ke panggung!`, 'win');
