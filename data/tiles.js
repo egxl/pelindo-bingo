@@ -1,10 +1,10 @@
 import fs from 'node:fs';
 
 const CHAPTER_COLORS = {
-  'Company Profile': '#38bdf8',
-  'Business Process': '#14b8a6',
-  'Visited Experience': '#a855f7',
-  'Business Challenge': '#f59e0b',
+  'Company Profile': '#38BDF8',
+  'Business Process': '#2EE59D',
+  'Visited Experience': '#C4B5FD',
+  'Business Challenge': '#FF6B6B',
 };
 
 function parseCsvRfc4180(rawText) {
@@ -77,7 +77,7 @@ for (const tile of TILES) {
 
 export const CHAPTERS = seenChapters.map((name) => ({
   name,
-  color: CHAPTER_COLORS[name] || '#38bdf8',
+  color: CHAPTER_COLORS[name] || '#38BDF8',
 }));
 
 export const GRID_CONFIGS = {

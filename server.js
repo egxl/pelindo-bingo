@@ -136,7 +136,7 @@ async function refreshQrSvg() {
     type: 'svg',
     margin: 2,
     width: 320,
-    color: { dark: '#030a16', light: '#ffffff' },
+    color: { dark: '#0a0a0a', light: '#ffffff' },
   });
 }
 
@@ -172,7 +172,7 @@ function getPublicState() {
     currentClue: currentTile
       ? {
           bab: currentTile.bab,
-          babColor: CHAPTER_COLOR_MAP[currentTile.bab] || '#38bdf8',
+          babColor: CHAPTER_COLOR_MAP[currentTile.bab] || '#38BDF8',
           cluePrompt: currentTile.cluePrompt,
           revealed: state.currentTileRevealed,
           id: state.currentTileRevealed ? currentTile.id : null,
