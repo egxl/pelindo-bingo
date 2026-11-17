@@ -5,6 +5,7 @@ const CHAPTER_COLORS = {
   'Business Process': '#2EE59D',
   'Visited Experience': '#C4B5FD',
   'Business Challenge': '#FF6B6B',
+  Penutup: '#FBBF24',
 };
 
 function parseCsvRfc4180(rawText) {
@@ -51,19 +52,24 @@ function parseCsvRfc4180(rawText) {
   return rows;
 }
 
-const csvPath = new URL('./bingo-7x7-tanjung-priok.csv', import.meta.url);
-const [headerRow, ...dataRows] = parseCsvRfc4180(fs.readFileSync(csvPath, 'utf8'));
+const csvPath = new URL('./bingo-7x7-tanjung-final.csv', import.meta.url);
+const rawRows = parseCsvRfc4180(fs.readFileSync(csvPath, 'utf8')).map((r) =>
+  r.length === 1 && r[0].includes(',') ? parseCsvRfc4180(r[0])[0] : r
+);
+const [headerRow, ...dataRows] = rawRows;
 const colIdx = Object.fromEntries(headerRow.map((h, i) => [h.trim(), i]));
 
 export const TILES = dataRows.map((cols, idx) => {
   const no = Number(cols[colIdx.no]);
   const bab = cols[colIdx.bab].trim();
+  const slide = colIdx.slide !== undefined ? (cols[colIdx.slide] || '').trim() : '';
   const kataKunci = cols[colIdx.kata_kunci].trim();
   const clueKocak = cols[colIdx.clue_kocak].trim();
   return {
     id: idx,
     no,
     bab,
+    slide,
     shortLabel: kataKunci,
     cluePrompt: clueKocak,
     answerDetail: kataKunci,
