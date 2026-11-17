@@ -831,7 +831,8 @@
             }
           }
           if (st.phase === 'ENDED' && (!session || !session.wonRank)) {
-            showMsg('Podium Juara 1–3 sudah terisi! Terima kasih telah bermain.', 'err');
+            const maxW = st.maxWinners || 3;
+            showMsg(`Podium Juara 1–${maxW} sudah terisi! Terima kasih telah bermain.`, 'err');
           }
         }
       } catch {}

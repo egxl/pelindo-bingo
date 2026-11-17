@@ -55,14 +55,14 @@
     }
     .title-group { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .chip {
-      padding: 5px 10px;
+      padding: 4px 9px;
       background: var(--violet);
       border: 3px solid var(--ink);
       box-shadow: 3px 3px 0 var(--ink);
       font-family: var(--font-mono);
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 900;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       color: var(--ink);
       transform: rotate(-1.5deg);
@@ -71,61 +71,64 @@
     }
     .title {
       font-family: var(--font-display);
-      font-size: clamp(22px, 2vw, 28px);
+      font-size: clamp(20px, 1.9vw, 26px);
       font-weight: 900;
       letter-spacing: -0.02em;
       color: var(--ink);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       white-space: nowrap;
     }
     .grid-badge {
       font-family: var(--font-mono);
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 900;
       background: var(--surface);
       border: 3px solid var(--ink);
       box-shadow: 3px 3px 0 var(--ink);
-      padding: 3px 9px;
-      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      letter-spacing: 0.03em;
       white-space: nowrap;
     }
-    .stats { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+    .stats { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
     .stat-box {
       background: var(--surface);
       border: 3px solid var(--ink);
       box-shadow: 3px 3px 0 var(--ink);
-      padding: 5px 11px;
-      font-size: 13.5px;
+      padding: 4px 9px;
+      font-size: 12.5px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.02em;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       white-space: nowrap;
     }
     .stat-box span {
       font-family: var(--font-mono);
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 900;
       font-variant-numeric: tabular-nums;
       background: var(--cyan);
       border: 2px solid var(--ink);
-      padding: 1px 7px;
+      padding: 1px 6px;
     }
+    .auto-btn,
     .sfx-btn {
       background: var(--green);
       font-family: var(--font-mono);
-      font-size: 12px;
-      padding: 6px 10px;
+      font-size: 11.5px;
+      padding: 6px 9px;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       white-space: nowrap;
       flex-shrink: 0;
     }
+    .auto-btn { background: var(--cyan); }
+    .auto-btn.off,
     .sfx-btn.muted {
       background: #E5E4DC;
       color: var(--muted);
@@ -455,20 +458,52 @@
       background: var(--yellow);
       border: 3px solid var(--ink);
       box-shadow: 3px 3px 0 var(--ink);
-      padding: 7px 12px;
+      padding: 6px 10px;
       font-family: var(--font-display);
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 900;
       color: var(--ink);
-      letter-spacing: 0.03em;
+      letter-spacing: 0.02em;
       text-transform: uppercase;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
+      white-space: nowrap;
+      min-width: 0;
+    }
+    .winner-stepper {
+      display: inline-flex;
+      align-items: stretch;
+      border: 3px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .winner-stepper button {
+      padding: 4px 9px;
+      border: none;
+      box-shadow: none;
+      background: var(--bg);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 900;
+    }
+    .winner-stepper button:hover { background: var(--cyan); }
+    .winner-stepper button:active { transform: none; box-shadow: none; }
+    .winner-stepper span {
+      padding: 4px 9px;
+      border-left: 2.5px solid var(--ink);
+      border-right: 2.5px solid var(--ink);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 900;
+      background: var(--yellow);
+      display: inline-flex;
+      align-items: center;
       white-space: nowrap;
     }
     .unmask-all-btn {
-      padding: 6px 10px;
+      padding: 6px 9px;
       font-family: var(--font-mono);
       font-size: 11px;
       background: var(--violet);
@@ -476,8 +511,16 @@
       align-items: center;
       gap: 5px;
       box-shadow: 3px 3px 0 var(--ink);
+      flex-shrink: 0;
     }
-    .winners-list { display: flex; flex-direction: column; gap: 7px; flex-shrink: 0; }
+    .winners-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+      max-height: 148px;
+      overflow-y: auto;
+    }
     .winners-empty {
       background: var(--bg);
       border: 2px dashed var(--ink);
@@ -549,39 +592,43 @@
     /* Crowd Radar & Censored Leaderboard */
     .radar-section {
       border-top: 3px solid var(--ink);
-      padding-top: 8px;
+      padding-top: 7px;
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 6px;
       flex-shrink: 0;
     }
     .radar-kpis {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
+      gap: 6px;
     }
     .kpi-box {
       background: var(--bg);
       border: 2.5px solid var(--ink);
-      box-shadow: 3px 3px 0 var(--ink);
-      padding: 6px 9px;
+      box-shadow: 2px 2px 0 var(--ink);
+      padding: 4px 7px;
       display: flex;
-      flex-direction: column;
-      gap: 2px;
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 4px;
+      overflow: hidden;
     }
     .kpi-box.hot { background: var(--coral); }
     .kpi-box.warm { background: var(--yellow); }
     .kpi-box.cool { background: var(--cyan); }
     .kpi-label {
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
     }
     .kpi-val {
       font-family: var(--font-mono);
-      font-size: clamp(16px, 1.5vw, 20px);
+      font-size: clamp(12.5px, 1.18vw, 15px);
       font-weight: 900;
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
@@ -589,10 +636,10 @@
 
     .lb-head {
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.03em;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -600,34 +647,36 @@
     }
     .lb-head-left { display: flex; align-items: center; gap: 6px; }
     .lb-list {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 5px;
     }
     .lb-empty {
+      grid-column: 1 / -1;
       background: var(--bg);
       border: 2px dashed var(--ink);
-      padding: 7px 10px;
-      font-size: 13px;
+      padding: 6px 10px;
+      font-size: 12.5px;
       font-weight: 700;
       color: var(--muted);
     }
     .lb-row {
       display: grid;
-      grid-template-columns: 36px minmax(100px, 1fr) 92px auto;
+      grid-template-columns: 28px minmax(60px, 1fr) auto;
+      grid-template-rows: auto auto;
       align-items: center;
-      gap: 8px;
-      padding: 6px 9px;
+      gap: 3px 6px;
+      padding: 5px 7px;
       background: var(--bg);
       border: 2px solid var(--ink);
       box-shadow: 2px 2px 0 var(--ink);
-      font-size: 14.5px;
+      font-size: 13.5px;
       font-weight: 800;
     }
     .lb-row.bingo-ready { background: var(--yellow); }
     .lb-rank {
       font-family: var(--font-mono);
-      font-size: 13px;
+      font-size: 11.5px;
       font-weight: 900;
       background: var(--surface);
       border: 1.5px solid var(--ink);
@@ -641,14 +690,15 @@
     }
     .lb-name small {
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted);
-      margin-left: 4px;
+      margin-left: 3px;
     }
     .lb-segs {
+      grid-column: 1 / -1;
       display: flex;
       gap: 2px;
-      height: 12px;
+      height: 8px;
     }
     .lb-seg {
       flex: 1;
@@ -659,7 +709,7 @@
     .lb-seg.bingo { background: var(--coral); }
     .lb-score {
       font-family: var(--font-mono);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 900;
       white-space: nowrap;
       text-align: right;
@@ -670,15 +720,15 @@
       flex: 1;
       overflow-y: auto;
       border-top: 3px solid var(--ink);
-      padding-top: 7px;
-      min-height: 60px;
+      padding-top: 8px;
+      min-height: 110px;
     }
     .history-label {
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 900;
       color: var(--ink);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       display: flex;
@@ -691,39 +741,40 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      font-size: 10px;
+      font-size: 10.5px;
     }
     .leg-dot {
       display: inline-flex;
       align-items: center;
       gap: 3px;
       border: 1.5px solid var(--ink);
-      padding: 1px 4px;
+      padding: 1px 5px;
       font-weight: 900;
     }
-    .history-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .history-grid { display: flex; flex-wrap: wrap; gap: 7px; }
     .hist-pill {
       display: inline-flex;
       align-items: stretch;
-      border: 2px solid var(--ink);
-      box-shadow: 2px 2px 0 var(--ink);
+      border: 2.5px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
       background: var(--bg);
       color: var(--ink);
-      font-size: 15px;
+      font-size: clamp(17px, 1.5vw, 21px);
       font-weight: 900;
+      line-height: 1.15;
     }
     .hist-pill b {
-      padding: 4px 7px;
-      border-right: 2px solid var(--ink);
+      padding: 5px 7px;
+      border-right: 2.5px solid var(--ink);
       font-family: var(--font-mono);
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 900;
       text-transform: uppercase;
       display: inline-flex;
       align-items: center;
     }
     .hist-pill span {
-      padding: 4px 9px;
+      padding: 5px 10px;
       display: inline-flex;
       align-items: center;
     }
@@ -821,6 +872,9 @@
     <div class="stats">
       <div class="stat-box">Pemain <span id="playerCount">0</span></div>
       <div class="stat-box">Call <span id="callProgress">0 / 62</span></div>
+      <button id="autoRevealBtn" type="button" class="auto-btn" onclick="cycleAutoReveal()" title="Toggle Auto-Reveal setelah countdown habis [A]">
+        <span>AUTO: 8s [A]</span>
+      </button>
       <button id="sfxBtn" type="button" class="sfx-btn" onclick="toggleSfx()">
         <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor"></polygon>
@@ -845,7 +899,7 @@
         </div>
         <div class="lobby-copy">
           <h1 class="lobby-headline">
-            Scan QR &amp; Menangkan Gelar <span class="hl-pelindo">PELINDO!</span>
+            Scan QR &amp; Rebut Podium Juara — <span class="hl-pelindo">PELINDO BINGO!</span>
           </h1>
           <div class="steps-list">
             <div class="step-row">
@@ -862,7 +916,7 @@
             </div>
             <div class="step-row">
               <span class="step-num" style="background: var(--green);">4</span>
-              <span>Lengkapi <strong>1 garis lurus/diagonal</strong>, tekan <strong>CLAIM PELINDO!</strong> untuk masuk <strong>Podium Top 3</strong>!</span>
+              <span>Lengkapi <strong>1 garis lurus/diagonal</strong>, tekan <strong>CLAIM PELINDO!</strong> untuk masuk <strong>Podium Top <span id="lobbyMaxWinners">3</span></strong>!</span>
             </div>
           </div>
           <div class="lobby-actions">
@@ -929,7 +983,12 @@
             <line x1="12" y1="15" x2="12" y2="20"></line>
             <line x1="8" y1="20" x2="16" y2="20"></line>
           </svg>
-          <span>PODIUM JUARA TOP 3 ("PELINDO!")</span>
+          <span id="podiumTitleText">PODIUM JUARA TOP 3</span>
+        </div>
+        <div class="winner-stepper" aria-label="Atur Jumlah Juara">
+          <button type="button" onclick="adjustMaxWinners(-1)" title="Kurangi jumlah juara">-</button>
+          <span id="maxWinnersVal">3 JUARA</span>
+          <button type="button" onclick="adjustMaxWinners(1)" title="Tambah jumlah juara">+</button>
         </div>
         <button id="revealAllBtn" type="button" class="unmask-all-btn hidden" onclick="unmaskAllWinners()">
           <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true">
@@ -951,11 +1010,11 @@
             <span class="kpi-val" id="kpiBingo">0 (0%)</span>
           </div>
           <div class="kpi-box warm">
-            <span class="kpi-label">Sisa 1 Kotak</span>
+            <span class="kpi-label">Sisa 1</span>
             <span class="kpi-val" id="kpiOneAway">0 (0%)</span>
           </div>
           <div class="kpi-box cool">
-            <span class="kpi-label">Sisa 2 Kotak</span>
+            <span class="kpi-label">Sisa 2</span>
             <span class="kpi-val" id="kpiTwoAway">0 (0%)</span>
           </div>
         </div>
@@ -968,7 +1027,7 @@
             </svg>
             <span>BALAPAN KE BINGO (NAMA DISENSOR)</span>
           </span>
-          <span id="lbSubLabel">TOP 5 TERDEKAT</span>
+          <span id="lbSubLabel">TOP 4 TERDEKAT</span>
         </div>
         <div class="lb-list" id="leaderboardList">
           <div class="lb-empty">Menunggu reveal pertama untuk hitung progres kartu...</div>
@@ -1034,9 +1093,16 @@
     let hasInitialized = false;
     let currentGridSize = 5;
     let currentPhase = 'LOBBY';
+    let currentMaxWinners = 3;
+    let currentClueRevealed = false;
     let sfxEnabled = true;
     let audioCtx = null;
     let countdownInterval = null;
+    let tensionInterval = null;
+    let tensionStep = 0;
+    let countdownSecondsLeft = 0;
+    const AUTO_REVEAL_OPTIONS = [8, 10, 6, 0];
+    let autoRevealSec = 8;
     let latestWinners = [];
     const unmaskedRanks = new Set();
 
@@ -1073,7 +1139,7 @@
           playTone(ctx, 440, 0, 0.09, 'square', 0.05);
           playTone(ctx, 660, 0.08, 0.12, 'square', 0.055);
         } else if (kind === 'tick') {
-          playTone(ctx, 880, 0, 0.06, 'square', 0.045);
+          playTone(ctx, 987.77, 0, 0.06, 'square', 0.045);
         } else if (kind === 'reveal') {
           playTone(ctx, 523.25, 0, 0.14, 'triangle', 0.09);
           playTone(ctx, 659.25, 0.07, 0.16, 'triangle', 0.09);
@@ -1093,12 +1159,79 @@
       } catch {}
     }
 
+    function stopTensionLoop() {
+      if (tensionInterval) {
+        clearInterval(tensionInterval);
+        tensionInterval = null;
+      }
+    }
+
+    function startTensionLoop() {
+      stopTensionLoop();
+      if (!sfxEnabled) return;
+      const bassPattern = [130.81, 130.81, 164.81, 196.0, 146.83, 146.83, 174.61, 196.0];
+      const leadPattern = [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 880.0, 783.99];
+      tensionStep = 0;
+
+      const tickGroove = () => {
+        if (!sfxEnabled || currentPhase !== 'PLAYING' || currentClueRevealed) {
+          stopTensionLoop();
+          return;
+        }
+        try {
+          const ctx = getAudioCtx();
+          if (!ctx) return;
+          const idx = tensionStep % bassPattern.length;
+          const isUrgent = countdownSecondsLeft > 0 && countdownSecondsLeft <= 3;
+          const shift = isUrgent ? 1.12246 : 1; // +2 semitones in final 3 seconds
+          playTone(ctx, bassPattern[idx] * shift, 0, 0.14, 'triangle', isUrgent ? 0.075 : 0.055);
+          if (tensionStep % 2 === 1 || isUrgent) {
+            playTone(ctx, leadPattern[idx] * shift, 0.02, 0.08, 'square', isUrgent ? 0.04 : 0.022);
+          }
+          tensionStep++;
+        } catch {}
+      };
+
+      tickGroove();
+      tensionInterval = setInterval(tickGroove, 230);
+    }
+
     function toggleSfx() {
       sfxEnabled = !sfxEnabled;
       const btn = document.getElementById('sfxBtn');
       btn.innerHTML = `${sfxEnabled ? ICONS.speakerOn : ICONS.speakerOff}<span>${sfxEnabled ? 'SFX: ON [M]' : 'SFX: OFF [M]'}</span>`;
       btn.classList.toggle('muted', !sfxEnabled);
-      if (sfxEnabled) getAudioCtx();
+      if (sfxEnabled) {
+        getAudioCtx();
+        if (currentPhase === 'PLAYING' && !currentClueRevealed && autoRevealSec > 0) {
+          startTensionLoop();
+        }
+      } else {
+        stopTensionLoop();
+      }
+    }
+
+    function renderAutoRevealBtn() {
+      const btn = document.getElementById('autoRevealBtn');
+      const isOff = autoRevealSec === 0;
+      btn.classList.toggle('off', isOff);
+      btn.innerHTML = `<span>${isOff ? 'AUTO: OFF [A]' : `AUTO: ${autoRevealSec}s [A]`}</span>`;
+    }
+
+    function cycleAutoReveal() {
+      const idx = AUTO_REVEAL_OPTIONS.indexOf(autoRevealSec);
+      autoRevealSec = AUTO_REVEAL_OPTIONS[(idx + 1) % AUTO_REVEAL_OPTIONS.length];
+      renderAutoRevealBtn();
+      if (currentPhase === 'PLAYING' && !currentClueRevealed) {
+        if (autoRevealSec > 0) startTimerBar(autoRevealSec);
+        else {
+          stopCountdown();
+          const bar = document.getElementById('timerBar');
+          bar.style.transition = 'none';
+          bar.style.width = '100%';
+          document.getElementById('timerCountdown').textContent = 'MANUAL';
+        }
+      }
     }
 
     async function loadQr() {
@@ -1124,40 +1257,60 @@
       await hostAction('/api/host/set-grid', { gridSize: nextSize });
     }
 
+    async function adjustMaxWinners(delta) {
+      const next = Math.min(10, Math.max(1, currentMaxWinners + delta));
+      if (next === currentMaxWinners) return;
+      await hostAction('/api/host/set-winners', { maxWinners: next });
+    }
+
     function stopCountdown() {
       if (countdownInterval) {
         clearInterval(countdownInterval);
         countdownInterval = null;
       }
+      stopTensionLoop();
+      countdownSecondsLeft = 0;
       const cd = document.getElementById('timerCountdown');
       cd.classList.remove('urgent');
     }
 
-    function startTimerBar() {
+    function startTimerBar(durationSec = autoRevealSec) {
       stopCountdown();
       const bar = document.getElementById('timerBar');
       const cd = document.getElementById('timerCountdown');
       bar.style.transition = 'none';
       bar.style.width = '100%';
-      let secondsLeft = 6;
-      cd.textContent = `${secondsLeft}s`;
+
+      if (!durationSec || durationSec <= 0) {
+        cd.textContent = 'MANUAL';
+        return;
+      }
+
+      countdownSecondsLeft = durationSec;
+      cd.textContent = `${countdownSecondsLeft}s`;
 
       setTimeout(() => {
-        bar.style.transition = 'width 6s linear';
+        bar.style.transition = `width ${durationSec}s linear`;
         bar.style.width = '0%';
       }, 50);
 
+      startTensionLoop();
+
       countdownInterval = setInterval(() => {
-        secondsLeft--;
-        if (secondsLeft <= 0) {
+        countdownSecondsLeft--;
+        if (countdownSecondsLeft <= 0) {
           cd.textContent = '0s';
           cd.classList.add('urgent');
           clearInterval(countdownInterval);
           countdownInterval = null;
+          stopTensionLoop();
+          if (autoRevealSec > 0 && currentPhase === 'PLAYING' && !currentClueRevealed) {
+            hostAction('/api/host/reveal');
+          }
           return;
         }
-        cd.textContent = `${secondsLeft}s`;
-        if (secondsLeft <= 3) {
+        cd.textContent = `${countdownSecondsLeft}s`;
+        if (countdownSecondsLeft <= 3) {
           cd.classList.add('urgent');
           playSfx('tick');
         }
@@ -1228,7 +1381,7 @@
         return;
       }
       el.innerHTML = recentJoins.map((j) =>
-        `<span class="join-chip"><b>#${String(j.cardNum).padStart(3, '0')}</b>${escapeHtml(j.maskedName)}</span>`
+        `<span class="join-chip"><b>#${String(j.cardNum).padStart(3, '0')}</b>${escapeHtml(j.name || j.maskedName)}</span>`
       ).join('');
     }
 
@@ -1258,7 +1411,7 @@
       }
 
       const lbEl = document.getElementById('leaderboardList');
-      const lbRows = t.leaderboard || [];
+      const lbRows = (t.leaderboard || []).slice(0, 4);
       if (lbRows.length === 0) {
         lbEl.innerHTML = '<div class="lb-empty">Menunggu pemain atau reveal pertama untuk hitung progres kartu...</div>';
         return;
@@ -1270,15 +1423,13 @@
           const filled = i < row.maxLineHits;
           return `<span class="lb-seg${filled ? (isReady ? ' bingo' : ' hit') : ''}"></span>`;
         }).join('');
-        const statusLabel = isReady
-          ? 'BINGO!'
-          : `${row.maxLineHits}/${gridSize} · ${row.linesAtMax} JALUR`;
+        const statusLabel = isReady ? 'BINGO!' : `${row.maxLineHits}/${gridSize}`;
         return `
           <div class="lb-row${isReady ? ' bingo-ready' : ''}">
             <span class="lb-rank">#${idx + 1}</span>
             <span class="lb-name">${escapeHtml(row.maskedName)}<small>#${String(row.cardNum).padStart(3, '0')}</small></span>
-            <div class="lb-segs" aria-label="${row.maxLineHits} dari ${gridSize}">${segs}</div>
             <span class="lb-score">${statusLabel}</span>
+            <div class="lb-segs" aria-label="${row.maxLineHits} dari ${gridSize}">${segs}</div>
           </div>
         `;
       }).join('');
@@ -1289,11 +1440,18 @@
         lastGameId = st.gameId;
         unmaskedRanks.clear();
         stopCountdown();
-        document.getElementById('timerCountdown').textContent = '6s';
+        document.getElementById('timerCountdown').textContent = autoRevealSec > 0 ? `${autoRevealSec}s` : 'MANUAL';
       }
 
       currentGridSize = st.gridSize || 5;
       currentPhase = st.phase;
+      currentMaxWinners = st.maxWinners || 3;
+      currentClueRevealed = Boolean(st.currentClue && st.currentClue.revealed);
+
+      document.getElementById('podiumTitleText').textContent = `PODIUM JUARA TOP ${currentMaxWinners}`;
+      document.getElementById('maxWinnersVal').textContent = `${currentMaxWinners} JUARA`;
+      document.getElementById('lobbyMaxWinners').textContent = currentMaxWinners;
+
       const gridLabel = st.gridLabel || (currentGridSize === 7 ? '7×7 P·E·L·I·N·D·O' : '5×5 P·R·I·O·K');
       document.title = `PELINDO! · Host Projector (${gridLabel})`;
       document.getElementById('gridTitleBadge').textContent = `· ${gridLabel}`;
@@ -1339,7 +1497,7 @@
         const clueKey = `${st.callIndex}-${st.currentClue.revealed}`;
         if (clueKey !== lastClueKey) {
           if (!st.currentClue.revealed) {
-            startTimerBar();
+            startTimerBar(autoRevealSec);
             clueSound = 'clue';
           } else {
             stopCountdown();
@@ -1412,15 +1570,20 @@
       } else if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         toggleFullscreen();
+      } else if (e.key.toLowerCase() === 'a' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        cycleAutoReveal();
       } else if (e.key.toLowerCase() === 'm' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         toggleSfx();
-      } else if ((e.key === '1' || e.key === '2' || e.key === '3') && !e.ctrlKey && !e.metaKey) {
+      } else if (/^[0-9]$/.test(e.key) && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
-        toggleWinnerUnmask(Number(e.key));
+        const rank = e.key === '0' ? 10 : Number(e.key);
+        toggleWinnerUnmask(rank);
       }
     });
 
+    renderAutoRevealBtn();
     loadQr();
     const es = new EventSource('/api/host/events');
     es.onmessage = (ev) => renderState(JSON.parse(ev.data));
