@@ -54,21 +54,6 @@
       flex-shrink: 0;
     }
     .title-group { display: flex; align-items: center; gap: 12px; min-width: 0; }
-    .chip {
-      padding: 4px 9px;
-      background: var(--violet);
-      border: 3px solid var(--ink);
-      box-shadow: 3px 3px 0 var(--ink);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--ink);
-      transform: rotate(-1.5deg);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
     .title {
       font-family: var(--font-display);
       font-size: clamp(20px, 1.9vw, 26px);
@@ -202,6 +187,7 @@
     }
     .hl-pelindo {
       display: inline-block;
+      margin-top: 6px;
       background: var(--yellow);
       border: 3px solid var(--ink);
       box-shadow: 4px 4px 0 var(--ink);
@@ -858,12 +844,27 @@
       text-overflow: ellipsis;
     }
     .hidden { display: none !important; }
+
+    /* Lobby-only layout: hide in-game telemetry/controls and enlarge QR stage */
+    body.lobby .main { grid-template-columns: 1fr; }
+    body.lobby .lobby-grid {
+      grid-template-columns: minmax(260px, min(32vw, 48vh)) 1fr;
+      max-width: 1180px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    body.lobby .right-panel,
+    body.lobby #gridTitleBadge,
+    body.lobby #callStatBox,
+    body.lobby .auto-btn,
+    body.lobby .play-only {
+      display: none;
+    }
   </style>
 </head>
-<body>
+<body class="lobby">
   <div class="topbar">
     <div class="title-group">
-      <span class="chip">KELOMPOK 36 · TANJUNG PRIOK</span>
       <div class="title">
         PELINDO!
         <span id="gridTitleBadge" class="grid-badge">· 5×5 P·R·I·O·K</span>
@@ -871,7 +872,7 @@
     </div>
     <div class="stats">
       <div class="stat-box">Pemain <span id="playerCount">0</span></div>
-      <div class="stat-box">Call <span id="callProgress">0 / 62</span></div>
+      <div class="stat-box" id="callStatBox">Call <span id="callProgress">0 / 62</span></div>
       <button id="autoRevealBtn" type="button" class="auto-btn" onclick="cycleAutoReveal()" title="Toggle Auto-Reveal setelah countdown habis [A]">
         <span>AUTO: 8s [A]</span>
       </button>
@@ -899,7 +900,7 @@
         </div>
         <div class="lobby-copy">
           <h1 class="lobby-headline">
-            Scan QR &amp; Rebut Podium Juara — <span class="hl-pelindo">PELINDO BINGO!</span>
+            Scan QR &amp; Rebut Podium Juara<br><span class="hl-pelindo">PELINDO BINGO!</span>
           </h1>
           <div class="steps-list">
             <div class="step-row">
@@ -926,6 +927,11 @@
             <div class="grid-switch" aria-label="Pilih Ukuran Grid">
               <button type="button" data-grid-btn="5" class="active" onclick="setGridSize(5)">5×5 P·R·I·O·K</button>
               <button type="button" data-grid-btn="7" onclick="setGridSize(7)">7×7 P·E·L·I·N·D·O</button>
+            </div>
+            <div class="winner-stepper" aria-label="Atur Jumlah Juara">
+              <button type="button" onclick="adjustMaxWinners(-1)" title="Kurangi jumlah juara">-</button>
+              <span id="maxWinnersVal">3 JUARA</span>
+              <button type="button" onclick="adjustMaxWinners(1)" title="Tambah jumlah juara">+</button>
             </div>
           </div>
           <div class="join-feed-box">
@@ -984,11 +990,6 @@
             <line x1="8" y1="20" x2="16" y2="20"></line>
           </svg>
           <span id="podiumTitleText">PODIUM JUARA TOP 3</span>
-        </div>
-        <div class="winner-stepper" aria-label="Atur Jumlah Juara">
-          <button type="button" onclick="adjustMaxWinners(-1)" title="Kurangi jumlah juara">-</button>
-          <span id="maxWinnersVal">3 JUARA</span>
-          <button type="button" onclick="adjustMaxWinners(1)" title="Tambah jumlah juara">+</button>
         </div>
         <button id="revealAllBtn" type="button" class="unmask-all-btn hidden" onclick="unmaskAllWinners()">
           <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true">
@@ -1051,9 +1052,9 @@
 
   <div class="bottombar">
     <div class="btn-group">
-      <button class="primary" onclick="hostAction('/api/host/next-clue')">Clue Berikutnya [Space]</button>
-      <button class="success" onclick="hostAction('/api/host/reveal')">Reveal Jawaban [Enter]</button>
-      <div class="grid-switch" aria-label="Switch Grid">
+      <button class="primary play-only" onclick="hostAction('/api/host/next-clue')">Clue Berikutnya [Space]</button>
+      <button class="success play-only" onclick="hostAction('/api/host/reveal')">Reveal Jawaban [Enter]</button>
+      <div class="grid-switch play-only" aria-label="Switch Grid">
         <button type="button" data-grid-btn="5" class="active" onclick="setGridSize(5)">5×5 P·R·I·O·K</button>
         <button type="button" data-grid-btn="7" onclick="setGridSize(7)">7×7 P·E·L·I·N·D·O</button>
       </div>
@@ -1471,7 +1472,9 @@
 
       const lobby = document.getElementById('lobbyView');
       const stage = document.getElementById('stageView');
-      if (st.phase === 'LOBBY') {
+      const isLobby = st.phase === 'LOBBY';
+      document.body.classList.toggle('lobby', isLobby);
+      if (isLobby) {
         lobby.classList.remove('hidden');
         stage.classList.add('hidden');
         stopCountdown();
