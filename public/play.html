@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PELINDO! · Kartu PRIOK</title>
+  <style>
+    :root {
+      --bg: #030a16;
+      --surface: #0b1f3c;
+      --tile: #102a4e;
+      --tile-border: rgba(56, 189, 248, 0.25);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --cyan: #38bdf8;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: radial-gradient(circle at 50% 0%, #0d284d 0%, var(--bg) 75%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 10px 18px;
+      user-select: none;
+    }
+    .app { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 10px; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(11, 31, 60, 0.85); border: 1px solid var(--tile-border);
+      border-radius: 12px; padding: 8px 12px;
+    }
+    .brand { font-weight: 900; font-size: 16px; letter-spacing: 0.08em; color: var(--cyan); }
+    .brand span { color: var(--green); }
+    .meta { font-size: 12px; color: var(--muted); text-align: right; }
+    .meta strong { color: var(--text); display: block; font-size: 13px; }
+
+    .status-bar {
+      background: rgba(11, 31, 60, 0.75); border: 1px solid var(--tile-border);
+      border-radius: 10px; padding: 8px 12px; font-size: 13px; line-height: 1.35;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .pill {
+      font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 999px;
+      background: rgba(56, 189, 248, 0.15); color: var(--cyan); white-space: nowrap;
+    }
+    .pill.live { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+
+    .col-headers {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+    }
+    .col-h {
+      text-align: center; font-weight: 900; font-size: 18px; padding: 6px 0;
+      border-radius: 8px; background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35); color: #fff;
+    }
+    .col-h small { display: block; font-size: 8px; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; }
+
+    .grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+    }
+    .tile {
+      aspect-ratio: 1 / 1;
+      background: var(--tile);
+      border: 1.5px solid var(--tile-border);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; text-align: center;
+      padding: 4px;
+      font-size: 11px; font-weight: 700; line-height: 1.15;
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 0.1s ease, background 0.15s ease, border-color 0.15s ease;
+      word-break: break-word;
+    }
+    .tile:active { transform: scale(0.95); }
+    .tile.marked {
+      background: linear-gradient(145deg, #0ea5e9, #0284c7);
+      border-color: #7dd3fc;
+      color: #fff;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+    }
+    .tile.free {
+      background: linear-gradient(145deg, #10b981, #059669);
+      border-color: #6ee7b7;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+      cursor: default;
+    }
+    .tile.win-line {
+      background: linear-gradient(145deg, #f59e0b, #d97706);
+      border-color: #fde68a;
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.65);
+    }
+
+    .claim-btn {
+      width: 100%; padding: 14px; border-radius: 14px; border: none;
+      font-size: 17px; font-weight: 900; letter-spacing: 0.05em;
+      background: #1e293b; color: #64748b; cursor: not-allowed;
+      transition: all 0.2s ease;
+    }
+    .claim-btn.ready {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff; cursor: pointer;
+      box-shadow: 0 8px 26px rgba(16, 185, 129, 0.45);
+      animation: pulse 1.2s infinite alternate;
+    }
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.02); }
+    }
+
+    .msg {
+      text-align: center; font-size: 13px; font-weight: 700; min-height: 20px;
+      padding: 6px 10px; border-radius: 8px; display: none;
+    }
+    .msg.show { display: block; }
+    .msg.err { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.35); }
+    .msg.win { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.5); font-size: 15px; }
+
+    /* Join modal overlay */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(3, 10, 22, 0.94);
+      display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 50;
+    }
+    .overlay.hidden { display: none; }
+    .join-card {
+      width: 100%; max-width: 360px; background: var(--surface);
+      border: 1px solid var(--tile-border); border-radius: 16px; padding: 22px;
+      display: flex; flex-direction: column; gap: 14px; text-align: center;
+    }
+    .join-card h1 { font-size: 26px; font-weight: 900; color: var(--cyan); letter-spacing: 0.06em; }
+    .join-card p { font-size: 13px; color: var(--muted); line-height: 1.45; }
+    .join-card input {
+      width: 100%; padding: 12px 14px; border-radius: 10px;
+      border: 1.5px solid var(--tile-border); background: #07152a; color: #fff;
+      font-size: 16px; font-weight: 600; outline: none; text-align: center;
+    }
+    .join-card input:focus { border-color: var(--cyan); }
+    .join-card button {
+      width: 100%; padding: 13px; border-radius: 10px; border: none;
+      background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff;
+      font-size: 16px; font-weight: 800; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay" id="joinOverlay">
+    <div class="join-card">
+      <h1>PELINDO!</h1>
+      <p>Edisi Tanjung Priok · Kartu 5×5 <strong>P·R·I·O·K</strong><br/>Masukkan nama panggilan untuk podium hadiah!</p>
+      <input id="nameInput" type="text" maxlength="28" placeholder="Nama / Inisial Anda..." autocomplete="off" />
+      <button id="joinBtn">MASUK &amp; AMBIL KARTU</button>
+    </div>
+  </div>
+
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">PELINDO<span>!</span></div>
+      <div class="meta">
+        <strong id="playerName">-</strong>
+        <span id="cardTag">Kartu #---</span>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div id="clueText">Menunggu MC memulai permainan...</div>
+      <span class="pill" id="phasePill">LOBBY</span>
+    </div>
+
+    <div class="col-headers">
+      <div class="col-h">P<small>Skala</small></div>
+      <div class="col-h">R<small>Alat</small></div>
+      <div class="col-h">I<small>Digital</small></div>
+      <div class="col-h">O<small>Operasi</small></div>
+      <div class="col-h">K<small>Kawasan</small></div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="msg" id="msgBox"></div>
+    <button class="claim-btn" id="claimBtn" disabled>LENGKAPI 1 GARIS UNTUK CLAIM PELINDO!</button>
+  </div>
+
+  <script>
+    const WIN_LINES = [
+      [0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],
+      [0,5,10,15,20],[1,6,11,16,21],[2,7,12,17,22],[3,8,13,18,23],[4,9,14,19,24],
+      [0,6,12,18,24],[4,8,12,16,20]
+    ];
+    const STORAGE_KEY = 'pelindo_priok_card_v1';
+    let session = null;
+    let marked = new Set([12]); // index 12 is FREE
+    let stateVersion = 0;
+    let winningLine = null;
+
+    const $ = (id) => document.getElementById(id);
+
+    function saveLocal() {
+      if (!session) return;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        gameId: session.gameId,
+        playerId: session.playerId,
+        cardNum: session.cardNum,
+        name: session.name,
+        grid: session.grid,
+        wonRank: session.wonRank,
+        marked: Array.from(marked),
+      }));
+    }
+
+    function findCompletedLine() {
+      for (const line of WIN_LINES) {
+        if (line.every((idx) => marked.has(idx))) return line;
+      }
+      return null;
+    }
+
+    function renderGrid() {
+      const gridEl = $('grid');
+      gridEl.innerHTML = '';
+      session.grid.forEach((cell, idx) => {
+        const div = document.createElement('div');
+        div.className = 'tile' + (cell.isFree ? ' free' : '') + (marked.has(idx) && !cell.isFree ? ' marked' : '');
+        if (winningLine && winningLine.includes(idx)) div.classList.add('win-line');
+        div.textContent = cell.shortLabel;
+        if (!cell.isFree && !session.wonRank) {
+          div.onclick = () => {
+            if (marked.has(idx)) marked.delete(idx);
+            else marked.add(idx);
+            saveLocal();
+            renderGrid();
+            updateClaimButton();
+          };
+        }
+        gridEl.appendChild(div);
+      });
+      updateClaimButton();
+    }
+
+    function updateClaimButton() {
+      const btn = $('claimBtn');
+      if (session.wonRank) {
+        btn.disabled = true;
+        btn.className = 'claim-btn ready';
+        btn.textContent = `🏆 JUARA #${session.wonRank} — MAJU KE PANGGUNG!`;
+        return;
+      }
+      const line = findCompletedLine();
+      if (line) {
+        btn.disabled = false;
+        btn.className = 'claim-btn ready';
+        btn.textContent = '🏆 CLAIM PELINDO!';
+      } else {
+        btn.disabled = true;
+        btn.className = 'claim-btn';
+        btn.textContent = 'LENGKAPI 1 GARIS UNTUK CLAIM PELINDO!';
+      }
+    }
+
+    function showMsg(text, type) {
+      const box = $('msgBox');
+      box.textContent = text;
+      box.className = `msg show ${type}`;
+    }
+
+    async function joinGame(name, existingPlayerId = null) {
+      const res = await fetch('/api/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, playerId: existingPlayerId }),
+      });
+      const data = await res.json();
+      if (!data.ok) return;
+      if (!session || session.gameId !== data.gameId) {
+        marked = new Set([12]);
+        winningLine = null;
+      }
+      session = data;
+      $('playerName').textContent = session.name;
+      $('cardTag').textContent = `Kartu #${String(session.cardNum).padStart(3, '0')}`;
+      $('joinOverlay').classList.add('hidden');
+      saveLocal();
+      renderGrid();
+    }
+
+    $('joinBtn').onclick = async () => {
+      const name = $('nameInput').value.trim();
+      $('joinBtn').disabled = true;
+      await joinGame(name || 'Kapten Tamu');
+      $('joinBtn').disabled = false;
+    };
+
+    $('claimBtn').onclick = async () => {
+      const line = findCompletedLine();
+      if (!line || !session) return;
+      $('claimBtn').disabled = true;
+      try {
+        const res = await fetch('/api/claim', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            playerId: session.playerId,
+            name: session.name,
+            lineIndices: line,
+          }),
+        });
+        const data = await res.json();
+        if (data.ok) {
+          session.wonRank = data.rank;
+          winningLine = data.winEntry ? data.winEntry.lineIndices : line;
+          saveLocal();
+          renderGrid();
+          showMsg(`SELAMAT! Anda JUARA #${data.rank} PELINDO! Silakan maju ke panggung!`, 'win');
+        } else {
+          showMsg(data.reason || 'Belum valid!', 'err');
+          updateClaimButton();
+        }
+      } catch {
+        showMsg('Koneksi lambat, coba ketuk lagi!', 'err');
+        updateClaimButton();
+      }
+    };
+
+    async function pollState() {
+      try {
+        const res = await fetch(`/api/state?v=${stateVersion}`);
+        if (res.status === 200) {
+          const st = await res.json();
+          stateVersion = st.v;
+          if (session && st.gameId !== session.gameId) {
+            localStorage.removeItem(STORAGE_KEY);
+            await joinGame(session.name, null);
+          }
+          const pill = $('phasePill');
+          pill.textContent = st.phase === 'PLAYING' ? `CALL #${st.callIndex}` : st.phase;
+          pill.className = 'pill' + (st.phase === 'PLAYING' ? ' live' : '');
+
+          if (st.phase === 'LOBBY') {
+            $('clueText').textContent = `Siap! ${st.playerCount} peserta bergabung. Menunggu MC...`;
+          } else if (st.currentClue) {
+            if (st.currentClue.revealed) {
+              $('clueText').innerHTML = `<strong>[${st.currentClue.col}] ${st.currentClue.shortLabel}</strong>`;
+            } else {
+              $('clueText').innerHTML = `<strong>Kolom [${st.currentClue.col}]:</strong> Lihat clue di layar!`;
+            }
+          }
+          if (st.phase === 'ENDED' && (!session || !session.wonRank)) {
+            showMsg('Podium Juara 1–3 sudah terisi! Terima kasih telah bermain.', 'err');
+          }
+        }
+      } catch {}
+      setTimeout(pollState, 2000 + Math.floor(Math.random() * 800));
+    }
+
+    (async function init() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        if (saved && saved.playerId) {
+          session = saved;
+          marked = new Set(saved.marked || [12]);
+          await joinGame(saved.name, saved.playerId);
+        }
+      } catch {}
+      pollState();
+    })();
+  </script>
+</body>
+</html>

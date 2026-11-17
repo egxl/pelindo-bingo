@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PELINDO! · Host Projector (PRIOK 5×5)</title>
+  <style>
+    :root {
+      --bg: #030a16;
+      --surface: #07152a;
+      --card: #0b1f3c;
+      --border: rgba(56, 189, 248, 0.25);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --cyan: #38bdf8;
+      --pelindo: #00a4e4;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --purple: #a855f7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", system-ui, -apple-system, sans-serif; }
+    body {
+      background: radial-gradient(circle at 50% 15%, #0e2a52 0%, var(--bg) 75%);
+      color: var(--text);
+      height: 100vh; width: 100vw; overflow: hidden;
+      display: flex; flex-direction: column;
+      user-select: none;
+    }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 36px; border-bottom: 1px solid var(--border);
+      background: rgba(3, 10, 22, 0.6);
+    }
+    .title-group { display: flex; align-items: center; gap: 14px; }
+    .chip {
+      padding: 5px 14px; border-radius: 999px; font-size: 13px; font-weight: 800;
+      letter-spacing: 0.08em; background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.4); color: var(--cyan);
+    }
+    .title { font-size: 26px; font-weight: 900; letter-spacing: 0.03em; }
+    .stats { display: flex; gap: 16px; align-items: center; font-size: 18px; font-weight: 800; }
+    .stat-box {
+      background: var(--card); border: 1px solid var(--border);
+      padding: 8px 18px; border-radius: 10px;
+    }
+    .stat-box span { color: var(--cyan); font-variant-numeric: tabular-nums; }
+
+    .main {
+      flex: 1; padding: 24px 36px; display: grid;
+      grid-template-columns: 1.55fr 0.95fr; gap: 24px; min-height: 0;
+    }
+    .panel {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 26px; display: flex; flex-direction: column;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Lobby Mode */
+    .lobby-grid { display: grid; grid-template-columns: 360px 1fr; gap: 28px; align-items: center; height: 100%; }
+    .qr-wrap {
+      background: #fff; padding: 16px; border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 40px rgba(56, 189, 248, 0.25);
+    }
+    .qr-wrap svg { width: 100%; height: auto; display: block; }
+    .join-url {
+      margin-top: 14px; padding: 10px 14px; border-radius: 10px;
+      background: rgba(56, 189, 248, 0.12); border: 1px solid var(--border);
+      font-family: Consolas, monospace; font-size: 15px; color: var(--cyan);
+      word-break: break-all; text-align: center;
+    }
+
+    /* Stage Clue Mode */
+    .col-pill {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 8px 18px; border-radius: 12px; font-size: 20px; font-weight: 900;
+      background: rgba(56, 189, 248, 0.15); border: 1px solid var(--cyan); color: #fff;
+      width: fit-content; margin-bottom: 18px;
+    }
+    .clue-prompt {
+      font-size: 36px; font-weight: 800; line-height: 1.3; color: #fff;
+      margin-bottom: 20px;
+    }
+    .timer-track {
+      width: 100%; height: 10px; border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08); overflow: hidden; margin-bottom: 20px;
+    }
+    .timer-fill {
+      height: 100%; width: 100%;
+      background: linear-gradient(90deg, var(--green), var(--cyan));
+    }
+    .reveal-box {
+      margin-top: auto; padding: 20px 24px; border-radius: 16px;
+      background: rgba(16, 185, 129, 0.14); border: 2px solid var(--green);
+      display: none;
+    }
+    .reveal-box.show { display: block; }
+    .reveal-title { font-size: 30px; font-weight: 900; color: #34d399; margin-bottom: 6px; }
+    .reveal-insight { font-size: 18px; color: var(--text); line-height: 1.45; }
+
+    /* Right Column: Podium + History */
+    .podium-title { font-size: 18px; font-weight: 900; color: var(--amber); margin-bottom: 12px; letter-spacing: 0.04em; }
+    .winners-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+    .winner-card {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; border-radius: 12px;
+      background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.45);
+    }
+    .winner-rank { font-size: 20px; font-weight: 900; color: var(--amber); margin-right: 12px; }
+    .winner-name { font-size: 19px; font-weight: 800; color: #fff; }
+    .winner-meta { font-size: 13px; color: var(--muted); font-family: Consolas, monospace; }
+
+    .history-wrap { flex: 1; overflow-y: auto; border-top: 1px solid var(--border); padding-top: 14px; }
+    .history-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .hist-pill {
+      padding: 6px 10px; border-radius: 8px; font-size: 13px; font-weight: 700;
+      background: rgba(56, 189, 248, 0.12); border: 1px solid var(--border); color: var(--text);
+    }
+    .hist-pill b { color: var(--cyan); margin-right: 4px; }
+
+    /* Bottom Controls */
+    .bottombar {
+      padding: 12px 36px; border-top: 1px solid var(--border);
+      background: rgba(3, 10, 22, 0.9);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .btn-group { display: flex; gap: 10px; }
+    button {
+      padding: 10px 18px; border-radius: 10px; border: 1px solid var(--border);
+      background: rgba(56, 189, 248, 0.12); color: #fff;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+    }
+    button:hover { background: rgba(56, 189, 248, 0.25); }
+    button.primary { background: linear-gradient(135deg, #0284c7, #00a4e4); border: none; }
+    button.success { background: linear-gradient(135deg, #059669, #10b981); border: none; }
+    button.danger { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="title-group">
+      <span class="chip">KELOMPOK 36 · TANJUNG PRIOK</span>
+      <div class="title">PELINDO! <span style="color: var(--cyan); font-weight: 600;">· P·R·I·O·K 5×5</span></div>
+    </div>
+    <div class="stats">
+      <div class="stat-box">Pemain: <span id="playerCount">0</span></div>
+      <div class="stat-box">Call: <span id="callProgress">0 / 35</span></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- Left Main Stage -->
+    <div class="panel">
+      <!-- LOBBY -->
+      <div id="lobbyView" class="lobby-grid">
+        <div>
+          <div class="qr-wrap" id="qrBox">Memuat QR...</div>
+          <div class="join-url" id="joinUrlText">http://127.0.0.1:3000</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <h1 style="font-size: 42px; font-weight: 900; line-height: 1.1;">
+            Scan QR &amp; Menangkan Gelar <span style="color: var(--cyan);">PELINDO!</span>
+          </h1>
+          <p style="font-size: 19px; color: var(--muted); line-height: 1.5;">
+            1. Scan QR di samping (WiFi atau 4G), masukkan nama Anda.<br/>
+            2. Setiap peserta mendapat kartu <strong>5×5 P·R·I·O·K</strong> unik.<br/>
+            3. Dengarkan clue MC, tandai kotak yang tepat.<br/>
+            4. Lengkapi <strong>1 garis lurus/diagonal</strong>, tekan <strong>CLAIM PELINDO!</strong> untuk masuk <strong>Podium Top 3</strong>!
+          </p>
+          <button class="primary" style="width: fit-content; font-size: 18px; padding: 14px 28px;" onclick="hostAction('/api/host/start')">
+            MULAI PERMAINAN [SPACE]
+          </button>
+        </div>
+      </div>
+
+      <!-- PLAYING / ENDED -->
+      <div id="stageView" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
+        <div class="col-pill" id="colPill">KOLOM P · Pelindo &amp; Skala</div>
+        <div class="clue-prompt" id="cluePrompt">Menunggu clue pertama...</div>
+        <div class="timer-track"><div class="timer-fill" id="timerBar"></div></div>
+        <div class="reveal-box" id="revealBox">
+          <div class="reveal-title" id="revealTitle"></div>
+          <div class="reveal-insight" id="revealInsight"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Podium & History -->
+    <div class="panel" style="min-height: 0;">
+      <div class="podium-title">🏆 PODIUM JUARA TOP 3 ("PELINDO!")</div>
+      <div class="winners-list" id="winnersList">
+        <div style="color: var(--muted); font-size: 14px;">Belum ada pemenang. Menunggu baris pertama...</div>
+      </div>
+
+      <div class="history-wrap">
+        <div style="font-size: 13px; font-weight: 800; color: var(--muted); margin-bottom: 10px; letter-spacing: 0.05em;">
+          KOTAK SUDAH DI-REVEAL:
+        </div>
+        <div class="history-grid" id="historyGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottombar">
+    <div class="btn-group">
+      <button class="primary" onclick="hostAction('/api/host/next-clue')">Clue Berikutnya [Space]</button>
+      <button class="success" onclick="hostAction('/api/host/reveal')">Reveal Jawaban [Enter]</button>
+      <button onclick="toggleFullscreen()">Fullscreen [F]</button>
+      <button class="danger" onclick="if(confirm('Reset game & kartu baru?')) hostAction('/api/host/reset')">Reset Game</button>
+    </div>
+    <div style="font-size: 13px; color: var(--muted);" id="hostStatus">Terhubung ke server lokal</div>
+  </div>
+
+  <script>
+    let lastClueKey = '';
+
+    async function loadQr() {
+      const res = await fetch('/api/qr');
+      document.getElementById('qrBox').innerHTML = await res.text();
+    }
+
+    async function hostAction(endpoint) {
+      await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    }
+
+    function startTimerBar() {
+      const bar = document.getElementById('timerBar');
+      bar.style.transition = 'none';
+      bar.style.width = '100%';
+      setTimeout(() => {
+        bar.style.transition = 'width 6s linear';
+        bar.style.width = '0%';
+      }, 50);
+    }
+
+    function renderState(st) {
+      document.getElementById('playerCount').textContent = st.playerCount;
+      document.getElementById('callProgress').textContent = `${st.callIndex} / ${st.totalCalls}`;
+
+      const urlEl = document.getElementById('joinUrlText');
+      if (urlEl.textContent !== st.joinUrl) {
+        urlEl.textContent = st.joinUrl;
+        loadQr();
+      }
+
+      const lobby = document.getElementById('lobbyView');
+      const stage = document.getElementById('stageView');
+      if (st.phase === 'LOBBY') {
+        lobby.classList.remove('hidden');
+        stage.classList.add('hidden');
+      } else {
+        lobby.classList.add('hidden');
+        stage.classList.remove('hidden');
+      }
+
+      if (st.currentClue) {
+        document.getElementById('colPill').textContent = `KOLOM ${st.currentClue.col} · ${st.currentClue.colName}`;
+        document.getElementById('cluePrompt').textContent = st.currentClue.cluePrompt;
+
+        const clueKey = `${st.callIndex}-${st.currentClue.revealed}`;
+        if (!st.currentClue.revealed && clueKey !== lastClueKey) {
+          startTimerBar();
+        }
+        lastClueKey = clueKey;
+
+        const rbox = document.getElementById('revealBox');
+        if (st.currentClue.revealed) {
+          rbox.classList.add('show');
+          document.getElementById('revealTitle').textContent = `✅ ${st.currentClue.shortLabel} — ${st.currentClue.answerDetail}`;
+          document.getElementById('revealInsight').textContent = st.currentClue.mcInsight;
+        } else {
+          rbox.classList.remove('show');
+        }
+      }
+
+      const wList = document.getElementById('winnersList');
+      if (st.winners.length === 0) {
+        wList.innerHTML = '<div style="color: var(--muted); font-size: 14px;">Belum ada pemenang. Menunggu 1 garis penuh...</div>';
+      } else {
+        wList.innerHTML = st.winners.map((w) => `
+          <div class="winner-card">
+            <div style="display:flex;align-items:center;">
+              <span class="winner-rank">#${w.rank}</span>
+              <span class="winner-name">${escapeHtml(w.name)}</span>
+            </div>
+            <span class="winner-meta">Kartu #${String(w.cardNum).padStart(3,'0')} · +${(w.elapsedSinceRevealMs/1000).toFixed(2)}s</span>
+          </div>
+        `).join('');
+      }
+
+      const hGrid = document.getElementById('historyGrid');
+      hGrid.innerHTML = st.revealedHistory.map((h) =>
+        `<span class="hist-pill"><b>${h.col}</b>${escapeHtml(h.shortLabel)}</span>`
+      ).join('');
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, (m) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+      else document.exitFullscreen();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        hostAction('/api/host/next-clue');
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        hostAction('/api/host/reveal');
+      } else if (e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    loadQr();
+    const es = new EventSource('/api/host/events');
+    es.onmessage = (ev) => renderState(JSON.parse(ev.data));
+    es.onerror = () => { document.getElementById('hostStatus').textContent = 'Menyambung ulang...'; };
+    es.onopen = () => { document.getElementById('hostStatus').textContent = 'Live SSE aktif (127.0.0.1:3000)'; };
+  </script>
+</body>
+</html>
