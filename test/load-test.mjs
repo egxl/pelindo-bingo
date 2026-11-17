@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createGameServer } from '../server.js';
-import { TILES } from '../data/tiles.js';
+import { CHAPTERS, TILES } from '../data/tiles.js';
 
 function buildWinLines(n) {
   const lines = [];
@@ -34,7 +34,7 @@ async function runModeVerification(base, state, expectedGridSize, expectedHeader
   const initState = await fetch(`${base}/api/state?v=0`).then((r) => r.json());
   assert.equal(initState.gridSize, expectedGridSize);
   assert.deepEqual(initState.headers, expectedHeaders);
-  assert.equal(initState.totalCalls, 62);
+  assert.equal(initState.totalCalls, TILES.length);
 
   // 400 concurrent players join (100-wide bursts to stay within Windows Desktop TCP SYN cap)
   const t0 = performance.now();
@@ -80,7 +80,7 @@ async function runModeVerification(base, state, expectedGridSize, expectedHeader
 
   // Advance clues & reveals until >= 4 players have a valid winning line
   let readyClaimants = [];
-  for (let step = 0; step < 62; step++) {
+  for (let step = 0; step < TILES.length; step++) {
     await fetch(`${base}/api/host/reveal`, { method: 'POST' });
     const st = await fetch(`${base}/api/state?v=0`).then((r) => r.json());
     const revealed = new Set(st.revealedIds);
@@ -118,7 +118,7 @@ async function runModeVerification(base, state, expectedGridSize, expectedHeader
 }
 
 async function run() {
-  assert.equal(TILES.length, 62, 'CSV must load 62 rows');
+  assert.equal(TILES.length, 65, 'CSV must load 65 rows');
 
   const { server, state } = await createGameServer();
   server.keepAliveTimeout = 65_000;
@@ -127,11 +127,13 @@ async function run() {
   const base = `http://127.0.0.1:${port}`;
 
   try {
-    // 1. Verify chapter-interleaved callOrder (first 4 calls cover all 4 chapters)
-    assert.equal(state.callOrder.length, 62);
-    const firstWaveBabs = new Set(state.callOrder.slice(0, 4).map((id) => TILES[id].bab));
-    assert.equal(firstWaveBabs.size, 4, 'First 4 calls must interleave across all 4 chapters');
-    console.log('[PASS] CSV 62 rows loaded & callOrder interleaved across 4 chapters');
+    // 1. Verify chapter-interleaved callOrder (first N calls cover all chapters)
+    assert.equal(state.callOrder.length, TILES.length);
+    const firstWaveBabs = new Set(
+      state.callOrder.slice(0, CHAPTERS.length).map((id) => TILES[id].bab)
+    );
+    assert.equal(firstWaveBabs.size, CHAPTERS.length, `First ${CHAPTERS.length} calls must interleave across all ${CHAPTERS.length} chapters`);
+    console.log(`[PASS] CSV ${TILES.length} rows loaded & callOrder interleaved across ${CHAPTERS.length} chapters`);
 
     // 2. Check static pages & QR SVG
     const [playRes, hostRes, qrRes] = await Promise.all([
