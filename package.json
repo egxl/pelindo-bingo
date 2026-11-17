@@ -1,0 +1,15 @@
+{
+  "name": "pelindo-priok-game",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local QR-scannable 5x5 PRIOK auditorium game for 400 Pelindo Business Immersion participants",
+  "scripts": {
+    "start": "node server.js",
+    "live": "node start-live.mjs",
+    "test": "node test/load-test.mjs"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  }
+}
