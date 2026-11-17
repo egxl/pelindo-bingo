@@ -325,8 +325,9 @@
       font-weight: 900;
       line-height: 1.14;
       color: var(--ink);
-      background: var(--bg);
+      background: var(--active-bab-tint, var(--bg));
       border: 3px solid var(--ink);
+      border-left: 16px solid var(--active-bab-color, var(--ink));
       box-shadow: 5px 5px 0 var(--ink);
       padding: 14px 20px;
       min-height: 0;
@@ -380,7 +381,7 @@
     .reveal-box {
       margin-top: 0;
       padding: 12px 16px;
-      background: var(--green);
+      background: var(--active-bab-color, var(--green));
       border: 4px solid var(--ink);
       box-shadow: 5px 5px 0 var(--ink);
       display: none;
@@ -396,12 +397,16 @@
       to { transform: scale(1); }
     }
     .reveal-kicker {
+      display: inline-block;
+      background: var(--surface);
+      border: 2px solid var(--ink);
+      padding: 2px 7px;
       font-family: var(--font-mono);
       font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
     .reveal-title {
       font-family: var(--font-display);
@@ -767,6 +772,11 @@
       padding: 1px 5px;
       font-weight: 900;
     }
+    .leg-dot.active-chapter {
+      border-width: 2.5px;
+      box-shadow: 2px 2px 0 var(--ink);
+      transform: translate(-1px, -1px);
+    }
     .history-grid { display: flex; flex-wrap: wrap; gap: 7px; }
     .hist-pill {
       display: inline-flex;
@@ -1070,10 +1080,11 @@
           <span id="historyTitleText">KOTAK SUDAH DI-REVEAL (0)</span>
           <div class="history-head-right">
             <span class="history-legend">
-              <span class="leg-dot" style="background: var(--cyan);">CP Profile</span>
-              <span class="leg-dot" style="background: var(--green);">BP Process</span>
-              <span class="leg-dot" style="background: var(--violet);">VE Visited</span>
-              <span class="leg-dot" style="background: var(--coral);">BC Challenge</span>
+              <span class="leg-dot" data-bab="Company Profile" style="background: var(--cyan);">CP Profile</span>
+              <span class="leg-dot" data-bab="Business Process" style="background: var(--green);">BP Process</span>
+              <span class="leg-dot" data-bab="Visited Experience" style="background: var(--violet);">VE Visited</span>
+              <span class="leg-dot" data-bab="Business Challenge" style="background: var(--coral);">BC Challenge</span>
+              <span class="leg-dot" data-bab="Penutup" style="background: #FBBF24;">PN Penutup</span>
             </span>
             <button id="historyToggleBtn" type="button" class="history-toggle-btn" onclick="toggleHistory()" aria-expanded="true" aria-controls="historyGrid" title="Sembunyikan/tampilkan kotak yang sudah di-reveal [H]">SEMBUNYIKAN [H]</button>
           </div>
@@ -1104,6 +1115,13 @@
       'Visited Experience': '#C4B5FD',
       'Business Challenge': '#FF6B6B',
       'Penutup': '#FBBF24',
+    };
+    const CHAPTER_TINTS = {
+      'Company Profile': '#D6F2FE',
+      'Business Process': '#D2FAEA',
+      'Visited Experience': '#EFEAFE',
+      'Business Challenge': '#FFDADA',
+      'Penutup': '#FEF3C7',
     };
     const CHAPTER_SHORT = {
       'Company Profile': 'CP',
@@ -1527,9 +1545,13 @@
       let clueSound = null;
 
       if (st.currentClue) {
+        const babColor = st.currentClue.babColor || CHAPTER_COLORS[st.currentClue.bab] || 'var(--cyan)';
+        const babTint = CHAPTER_TINTS[st.currentClue.bab] || 'var(--bg)';
+        stage.style.setProperty('--active-bab-color', babColor);
+        stage.style.setProperty('--active-bab-tint', babTint);
         const pill = document.getElementById('colPill');
         pill.textContent = `BAB: ${st.currentClue.bab}`;
-        pill.style.background = st.currentClue.babColor || CHAPTER_COLORS[st.currentClue.bab] || 'var(--cyan)';
+        pill.style.background = babColor;
         document.getElementById('cluePrompt').textContent = st.currentClue.cluePrompt;
 
         const clueKey = `${st.callIndex}-${st.currentClue.revealed}`;
@@ -1565,9 +1587,16 @@
         }
       } else {
         lastClueKey = '';
+        stage.style.removeProperty('--active-bab-color');
+        stage.style.removeProperty('--active-bab-tint');
         stage.classList.remove('has-reveal');
         document.getElementById('revealBox').classList.remove('show');
       }
+
+      const activeBab = (st.phase === 'PLAYING' && st.currentClue) ? st.currentClue.bab : null;
+      document.querySelectorAll('.history-legend .leg-dot').forEach((dot) => {
+        dot.classList.toggle('active-chapter', Boolean(activeBab && dot.dataset.bab === activeBab));
+      });
 
       if (hasInitialized) {
         if (winnerAdded) playSfx('win');
@@ -1586,7 +1615,7 @@
       hGrid.innerHTML = st.revealedHistory.map((h) => {
         const chapColor = CHAPTER_COLORS[h.bab] || '#38BDF8';
         const chapCode = CHAPTER_SHORT[h.bab] || h.bab.slice(0, 2).toUpperCase();
-        return `<span class="hist-pill" title="${escapeHtml(h.bab)}"><b style="background:${chapColor};">${escapeHtml(chapCode)}</b><span>${escapeHtml(h.shortLabel)}</span></span>`;
+        return `<span class="hist-pill" style="background:${chapColor};" title="${escapeHtml(h.bab)}"><b style="background:var(--ink);color:${chapColor};">${escapeHtml(chapCode)}</b><span>${escapeHtml(h.shortLabel)}</span></span>`;
       }).join('');
     }
 
