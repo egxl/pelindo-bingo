@@ -5,30 +5,35 @@ import zlib from 'node:zlib';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import QRCode from 'qrcode';
-import { COLUMNS, TILES } from './data/tiles.js';
+import { CHAPTERS, GRID_CONFIGS, TILES } from './data/tiles.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 3000);
 const HOST = '127.0.0.1';
 const MAX_WINNERS = 3;
+const CHAPTER_COLOR_MAP = Object.fromEntries(CHAPTERS.map((c) => [c.name, c.color]));
 
-const WIN_LINES = [
-  // Rows
-  [0, 1, 2, 3, 4],
-  [5, 6, 7, 8, 9],
-  [10, 11, 12, 13, 14],
-  [15, 16, 17, 18, 19],
-  [20, 21, 22, 23, 24],
-  // Cols
-  [0, 5, 10, 15, 20],
-  [1, 6, 11, 16, 21],
-  [2, 7, 12, 17, 22],
-  [3, 8, 13, 18, 23],
-  [4, 9, 14, 19, 24],
-  // Diagonals
-  [0, 6, 12, 18, 24],
-  [4, 8, 12, 16, 20],
-];
+function resolveInitialGridSize() {
+  const arg = process.argv.find((a) => a.startsWith('--grid='));
+  const raw = arg ? Number(arg.slice(7)) : Number(process.env.GRID_SIZE || 5);
+  return raw === 7 ? 7 : 5;
+}
+
+function buildWinLines(n) {
+  const lines = [];
+  for (let r = 0; r < n; r++) {
+    lines.push(Array.from({ length: n }, (_, c) => r * n + c));
+    lines.push(Array.from({ length: n }, (_, c) => c * n + r));
+  }
+  lines.push(Array.from({ length: n }, (_, i) => i * n + i));
+  lines.push(Array.from({ length: n }, (_, i) => i * n + (n - 1 - i)));
+  return lines;
+}
+
+const WIN_LINES_BY_SIZE = {
+  5: buildWinLines(5),
+  7: buildWinLines(7),
+};
 
 // Deterministic PRNG (Mulberry32) so cardId always reproduces the same 5x5 grid
 function mulberry32(seed) {
@@ -51,45 +56,39 @@ function shuffleWithRng(arr, rng) {
   return copy;
 }
 
-function generateCardGrid(cardSeed) {
+function generateCardGrid(cardSeed, gridSize) {
   const rng = mulberry32(cardSeed);
-  const byCol = [0, 1, 2, 3, 4].map((colIdx) =>
-    shuffleWithRng(
-      TILES.filter((t) => t.colIndex === colIdx),
-      rng
-    )
-  );
+  const totalCells = gridSize * gridSize;
+  const freeIndex = Math.floor(totalCells / 2);
+  const pool = shuffleWithRng(TILES, rng);
+  const grid = new Array(totalCells);
+  let cursor = 0;
 
-  // 5x5 row-major array; index 12 (row 2, col 2) is FREE ★ PELINDO
-  const grid = new Array(25);
-  for (let r = 0; r < 5; r++) {
-    for (let c = 0; c < 5; c++) {
-      const idx = r * 5 + c;
-      if (idx === 12) {
-        grid[idx] = { id: -1, col: 'I', shortLabel: 'FREE ★ PELINDO', isFree: true };
-      } else {
-        const tile = byCol[c].pop();
-        grid[idx] = { id: tile.id, col: tile.col, shortLabel: tile.shortLabel, isFree: false };
-      }
+  for (let idx = 0; idx < totalCells; idx++) {
+    if (idx === freeIndex) {
+      grid[idx] = { id: -1, bab: 'FREE', shortLabel: 'FREE ★ PELINDO', isFree: true };
+    } else {
+      const tile = pool[cursor++];
+      grid[idx] = { id: tile.id, bab: tile.bab, shortLabel: tile.shortLabel, isFree: false };
     }
   }
   return grid;
 }
 
-// Balanced call order: cycles across P-R-I-O-K waves so every column stays active
+// Chapter-interleaved call order: round-robin across the 4 shuffled bab buckets
 function buildCallOrder() {
   const rng = mulberry32(Date.now() ^ crypto.randomInt(1, 1_000_000));
-  const buckets = [0, 1, 2, 3, 4].map((c) =>
+  const buckets = CHAPTERS.map((ch) =>
     shuffleWithRng(
-      TILES.filter((t) => t.colIndex === c),
+      TILES.filter((t) => t.bab === ch.name),
       rng
     )
   );
+  const maxLen = Math.max(...buckets.map((b) => b.length));
   const order = [];
-  for (let wave = 0; wave < 7; wave++) {
-    const colOrder = shuffleWithRng([0, 1, 2, 3, 4], rng);
-    for (const c of colOrder) {
-      if (buckets[c][wave]) order.push(buckets[c][wave].id);
+  for (let i = 0; i < maxLen; i++) {
+    for (const bucket of buckets) {
+      if (bucket[i]) order.push(bucket[i].id);
     }
   }
   return order;
@@ -98,6 +97,7 @@ function buildCallOrder() {
 // Game state
 const state = {
   gameId: crypto.randomBytes(4).toString('hex'),
+  gridSize: resolveInitialGridSize(),
   version: 1,
   phase: 'LOBBY', // LOBBY | PLAYING | ENDED
   joinUrl: `http://127.0.0.1:${PORT}`,
@@ -108,12 +108,28 @@ const state = {
   currentClueStartedAt: 0,
   lastRevealAt: 0,
   revealedIds: new Set(),
-  revealedHistory: [], // [{ id, col, shortLabel, answerDetail, mcInsight }]
+  revealedHistory: [], // [{ id, bab, shortLabel }]
   players: new Map(), // playerId -> { playerId, cardNum, seed, name, grid, wonRank }
   nextCardNum: 1,
   winners: [], // [{ rank, playerId, cardNum, name, claimAtMs, elapsedSinceRevealMs, lineIndices }]
   hostClients: new Set(),
 };
+
+function resetGameState(nextGridSize = state.gridSize) {
+  state.gameId = crypto.randomBytes(4).toString('hex');
+  state.gridSize = nextGridSize;
+  state.phase = 'LOBBY';
+  state.callOrder = buildCallOrder();
+  state.callCursor = -1;
+  state.currentTileRevealed = false;
+  state.currentClueStartedAt = 0;
+  state.lastRevealAt = 0;
+  state.revealedIds.clear();
+  state.revealedHistory = [];
+  state.players.clear();
+  state.nextCardNum = 1;
+  state.winners = [];
+}
 
 async function refreshQrSvg() {
   state.qrSvg = await QRCode.toString(state.joinUrl, {
@@ -142,8 +158,12 @@ function getTileById(id) {
 function getPublicState() {
   const currentId = state.callCursor >= 0 ? state.callOrder[state.callCursor] : null;
   const currentTile = currentId !== null ? getTileById(currentId) : null;
+  const gridConfig = GRID_CONFIGS[state.gridSize];
   return {
     gameId: state.gameId,
+    gridSize: state.gridSize,
+    headers: gridConfig.headers,
+    gridLabel: gridConfig.label,
     v: state.version,
     phase: state.phase,
     playerCount: state.players.size,
@@ -151,14 +171,13 @@ function getPublicState() {
     totalCalls: state.callOrder.length,
     currentClue: currentTile
       ? {
-          col: currentTile.col,
-          colName: COLUMNS[currentTile.colIndex].name,
+          bab: currentTile.bab,
+          babColor: CHAPTER_COLOR_MAP[currentTile.bab] || '#38bdf8',
           cluePrompt: currentTile.cluePrompt,
           revealed: state.currentTileRevealed,
           id: state.currentTileRevealed ? currentTile.id : null,
           shortLabel: state.currentTileRevealed ? currentTile.shortLabel : null,
           answerDetail: state.currentTileRevealed ? currentTile.answerDetail : null,
-          mcInsight: state.currentTileRevealed ? currentTile.mcInsight : null,
         }
       : null,
     revealedIds: Array.from(state.revealedIds),
@@ -292,12 +311,13 @@ export async function createGameServer() {
           return sendJson(res, 200, {
             ok: true,
             gameId: state.gameId,
+            gridSize: state.gridSize,
+            headers: GRID_CONFIGS[state.gridSize].headers,
             playerId: p.playerId,
             cardNum: p.cardNum,
             name: p.name,
             grid: p.grid,
             wonRank: p.wonRank,
-            columns: COLUMNS,
           });
         }
 
@@ -305,7 +325,7 @@ export async function createGameServer() {
         const cardNum = state.nextCardNum++;
         const seed = crypto.randomInt(1, 2_000_000_000);
         const name = rawName || `Kapten #${String(cardNum).padStart(3, '0')}`;
-        const grid = generateCardGrid(seed);
+        const grid = generateCardGrid(seed, state.gridSize);
         const record = { playerId, cardNum, seed, name, grid, wonRank: null };
         state.players.set(playerId, record);
         bumpState();
@@ -313,12 +333,13 @@ export async function createGameServer() {
         return sendJson(res, 200, {
           ok: true,
           gameId: state.gameId,
+          gridSize: state.gridSize,
+          headers: GRID_CONFIGS[state.gridSize].headers,
           playerId,
           cardNum,
           name,
           grid,
           wonRank: null,
-          columns: COLUMNS,
         });
       } catch (err) {
         return sendJson(res, 400, { ok: false, reason: err.message });
@@ -358,9 +379,10 @@ export async function createGameServer() {
         }
 
         // Validate submitted line or auto-detect any valid completed line on player's card
-        const candidateLines = Array.isArray(lineIndices) && lineIndices.length === 5
-          ? WIN_LINES.filter((L) => L.every((idx, i) => idx === lineIndices[i]))
-          : WIN_LINES;
+        const winLines = WIN_LINES_BY_SIZE[state.gridSize];
+        const candidateLines = Array.isArray(lineIndices) && lineIndices.length === state.gridSize
+          ? winLines.filter((L) => L.every((idx, i) => idx === lineIndices[i]))
+          : winLines;
 
         let matchedLine = null;
         for (const line of candidateLines) {
@@ -429,13 +451,17 @@ export async function createGameServer() {
       }
 
       if (req.method === 'POST' && pathname === '/api/host/set-url') {
-        const body = await readJsonBody(req);
-        if (typeof body.url === 'string' && body.url.startsWith('http')) {
-          state.joinUrl = body.url.trim();
-          await refreshQrSvg();
-          bumpState();
+        try {
+          const body = await readJsonBody(req);
+          if (typeof body.url === 'string' && body.url.startsWith('http')) {
+            state.joinUrl = body.url.trim();
+            await refreshQrSvg();
+            bumpState();
+          }
+          return sendJson(res, 200, { ok: true, joinUrl: state.joinUrl });
+        } catch (err) {
+          return sendJson(res, 400, { ok: false, reason: err.message });
         }
-        return sendJson(res, 200, { ok: true, joinUrl: state.joinUrl });
       }
 
       if (req.method === 'POST' && pathname === '/api/host/start') {
@@ -461,9 +487,8 @@ export async function createGameServer() {
             const t = getTileById(tileId);
             state.revealedHistory.unshift({
               id: t.id,
-              col: t.col,
+              bab: t.bab,
               shortLabel: t.shortLabel,
-              answerDetail: t.answerDetail,
             });
           }
           bumpState();
@@ -482,19 +507,23 @@ export async function createGameServer() {
         return sendJson(res, 200, { ok: true, state: getPublicState() });
       }
 
+      if (req.method === 'POST' && pathname === '/api/host/set-grid') {
+        try {
+          const body = await readJsonBody(req);
+          const gridSize = Number(body.gridSize);
+          if (gridSize !== 5 && gridSize !== 7) {
+            return sendJson(res, 400, { ok: false, reason: 'gridSize must be 5 or 7' });
+          }
+          resetGameState(gridSize);
+          bumpState();
+          return sendJson(res, 200, { ok: true, state: getPublicState() });
+        } catch (err) {
+          return sendJson(res, 400, { ok: false, reason: err.message });
+        }
+      }
+
       if (req.method === 'POST' && pathname === '/api/host/reset') {
-        state.gameId = crypto.randomBytes(4).toString('hex');
-        state.phase = 'LOBBY';
-        state.callOrder = buildCallOrder();
-        state.callCursor = -1;
-        state.currentTileRevealed = false;
-        state.currentClueStartedAt = 0;
-        state.lastRevealAt = 0;
-        state.revealedIds.clear();
-        state.revealedHistory = [];
-        state.players.clear();
-        state.nextCardNum = 1;
-        state.winners = [];
+        resetGameState(state.gridSize);
         bumpState();
         return sendJson(res, 200, { ok: true, state: getPublicState() });
       }
